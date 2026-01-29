@@ -1,7 +1,7 @@
 # TRACERS IDL Load Routines
 
 IDL load routines for the TRACERS mission, designed to follow SPEDAS
-conventions for data download and loading.
+conventions for data download and loading. These routines are regularly updated, so check back often!
 
 ## Features
 - Automatic data download
@@ -13,7 +13,6 @@ conventions for data download and loading.
 - IDL 
 - SPEDAS routines (e.g. `tplot`) from [SPEDAS wiki here](https://spedas.org/wiki/index.php?title=Downloads_and_Installation)
 - (optional) IDL-colorbars routines (e.g. `loadcv`) from planetarymike [github repo here](https://github.com/planetarymike/IDL-Colorbars)
-- Jasper Halekas' ACE L2 load routines
 
 ## Notes
 - You will need to update the tracers_init.pro before running any of this code!!
@@ -23,6 +22,9 @@ conventions for data download and loading.
 - MAG, MSC, MAGIC, ACI
 - Load in both spacecraft data (ts1 and ts2)
 - Email Sky with what you want! <skylar.shaver@mail.wvu.edu>
+
+## Contributors
+A special thank you to contributors to this code: Dr. John Bonnell, Dr. Marit Oieroset, Dr. Jasper Halekas, Dr. Katy Goodrich, Dr. Sarah Henderson, and others!
 
 ## Basic Usage
 ```idl

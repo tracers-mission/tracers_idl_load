@@ -18,6 +18,8 @@ pro tracers_init
 
   ; set username /password combo to access TRACERS portal
   setenv, 'TRACERS_USER_PASS=input-your-username:your-password-here'
+
+  ; spd_graphics_config.pro ; set some default graphics settings for tplots?
 end
 
 ; program

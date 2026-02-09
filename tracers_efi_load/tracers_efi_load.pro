@@ -253,6 +253,7 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
       if keyword_set(trange) then begin
         tr = timerange()
         tplot_names, names = tvars
+        if n_elements(tvars) eq 0 then tvars = [''] ; if no tplot variables, make it an array with one empty string to avoid errors
         if n_elements(tr) eq 2 and (tvars[0] gt '') then begin
           time_clip, tnames(tvars), trange[0], trange[1], /replace
         end

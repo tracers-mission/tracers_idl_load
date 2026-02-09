@@ -16,7 +16,6 @@ tracers_efi_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads l2 d
 
 ; ACE Load/tplot
 ; -----------------------------------
-.compile get_highest_version ; get the most recent version of the ace load routine
 tracers_ace_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads data for the time span given to your specified local path on external HDD and tplots
 
 ; Solar Wind Data Load

@@ -25,6 +25,7 @@ tracers_ace_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/', data_filena
 dirname = file_dirname(fns, /mark_directory)
 dirname = dirname[0].remove(-8)
 tracers_ace_load_l2_data, path = dirname, sv = 'ts2', /tplot, /chare
+; dependencies: get_highest_version.pro, tra_ace_make_info_str.pro
 
 ; spectra
 get_data, 'ts2_ace_en_eflux', data = dat, limit = lim

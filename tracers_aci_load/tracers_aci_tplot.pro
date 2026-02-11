@@ -24,7 +24,12 @@ pro tracers_aci_tplot, filenames
     suf = '_aci_' + strmid(tmp, 4, 3) ; suffix for variables def or pre (definitive or predictive)
 
     tvars = []
+    stop
+    vstr = stregex(filenames, '(v)(.+\..+\..+)(\.cdf)', /extract, /subexpr)
+    highv = get_highest_version(vstr[2, *], 3)
+    acel2file = filenames[highv]
 
+    stop
     for ifil = 0, nfilesexists - 1 do begin
       cdf2tplot, files = filenames[ifil], varformat = '*', suffix = suf[ifil]
       tvars = [tvars, tnames()]

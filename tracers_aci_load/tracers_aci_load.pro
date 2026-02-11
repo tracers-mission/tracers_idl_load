@@ -104,9 +104,10 @@ pro tracers_aci_load, remote_path = remote_path, local_path = local_path, $
     end ; level 3
 
     if tplot and (total(level.contains('l2')) ge 1) then begin
-      dirname = file_dirname(data_filenames, /mark_directory)
-      dirname = dirname[0].remove(-8)
-      dtmp = strmid(dates, 2)
+      ; dirname = file_dirname(data_filenames, /mark_directory)
+      ; dirname = dirname[0].remove(-8)
+      ; dtmp = strmid(dates, 2)
+      tracers_aci_tplot, data_filenames
     end ; tplot
   endfor ; loop over dates
 end

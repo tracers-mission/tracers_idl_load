@@ -32,10 +32,38 @@ pro tracers_aci_tplot, filenames
     highv = get_highest_version(vstr[2, *], 3)
     acil2file = filenames[highv]
 
+    ; tvars = [] ; highest version file only
+    ; cdf2tplot, files = acil2file, varformat = '*'
+    ; tvars = [tvars, tnames()]
+
     tvars = []
-    cdf2tplot, files = acil2file[ifil], varformat = '*'
-    tvars = [tvars, tnames()]
-    stop
+
+    for ifil = 0, nfilesexists - 1 do begin
+      cdf2tplot, files = filenames[ifil], varformat = '*'
+      tvars = [tvars, tnames()]
+
+      get_data, 'ts2_l2_aci_tscs_def', data = dat, limit = lim, dlimit = dlim ; differential energy flux
+      ntimes = n_elements(dat.x)
+      nen = n_elements(dat.v1)
+      energy_steps = dat.v1
+
+      ave_flux = fltarr(ntimes, nen) ; y: flux values averaged over all angles
+      eflux = fltarr(ntimes, nen)
+      energies = fltarr(ntimes, nen) ; v: all energies
+
+      for i = 0, ntimes - 1 do begin ; all times
+        for j = 0, nen - 1 do begin ; all energies
+          m = moment(dat.y[i, *, j]) ; average over all angles
+          ave_flux[i, j] = m[0]
+          energies[i, j] = energy_steps[j]
+        end ; over energies
+      end ; over times
+
+      espec = transpose(total(data.y, 2)) / 16.
+
+      store_data, 'ts2_l2_aci_an_eflux', data = {x: dat.x, y: ave_flux, v: energies}, limit = {ylog: 1, zlog: 1, ytitle: 'Energy [eV]', ztitle: 'Diff. En. Flux', spec: 1, ystyle: 1, no_interp: 1}
+      stop
+    end ; for files
   endif ; over filenames found check
 end
 

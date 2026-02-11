@@ -93,7 +93,7 @@ pro tracers_ace_load, remote_path = remote_path, local_path = local_path, $
     end ; level 2
 
     if (total(level.contains('l3')) ge 1) then begin ; level 3
-      ace_path = '/flight/ACE/' + strlowcase(spacecraft) + '/3/' + yyyy + '/' + mm + '/'
+      ace_path = '/flight/ACE/' + strlowcase(spacecraft) + '/l3/' + yyyy + '/' + mm + '/'
       fn_i = ace_path + strlowcase(spacecraft) + '_l3_ace_' + '*' + dates[i] + '_v' + version + '.cdf'
 
       dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $

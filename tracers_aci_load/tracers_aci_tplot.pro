@@ -1,4 +1,8 @@
 ;+
+; :Description:
+;   Notes:
+;     filenames must be for one day only
+;
 ; :Arguments:
 ;   filenames: bidirectional, required, any
 ;     Placeholder docs for argument, keyword, or property

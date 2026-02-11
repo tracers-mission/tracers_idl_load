@@ -18,6 +18,10 @@ tracers_efi_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads l2 d
 ; -----------------------------------
 tracers_ace_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads data for the time span given to your specified local path on external HDD and tplots
 
+; ACI Load/tplot
+; -----------------------------------
+tracers_aci_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads data for the time span given to your specified local path on external HDD and tplots
+
 ; Solar Wind Data Load
 ; -----------------------------------
 tracers_sw_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; load solar wind data onto external HD

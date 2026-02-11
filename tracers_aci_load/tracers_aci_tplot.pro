@@ -1,7 +1,7 @@
 ;+
 ; :Description:
 ;   Notes:
-;     filenames must be for one day only
+;     filenames must be for one day only! Different from other tplot routines so far 2/10/2026
 ;
 ; :Arguments:
 ;   filenames: bidirectional, required, any
@@ -28,19 +28,14 @@ pro tracers_aci_tplot, filenames
     filenames = filenames[indx]
 
     tmp = file_basename(filenames)
-    suf = '_aci_' + strmid(tmp, 4, 3) ; suffix for variables def or pre (definitive or predictive)
+    vstr = stregex(tmp, '(v)(.+\..+\..+)(\.cdf)', /extract, /subexpr)
+    highv = get_highest_version(vstr[2, *], 3)
+    acil2file = filenames[highv]
 
     tvars = []
+    cdf2tplot, files = acil2file[ifil], varformat = '*'
+    tvars = [tvars, tnames()]
     stop
-    vstr = stregex(filenames, '(v)(.+\..+\..+)(\.cdf)', /extract, /subexpr)
-    highv = get_highest_version(vstr[2, *], 3)
-    acel2file = filenames[highv]
-
-    stop
-    for ifil = 0, nfilesexists - 1 do begin
-      cdf2tplot, files = filenames[ifil], varformat = '*', suffix = suf[ifil]
-      tvars = [tvars, tnames()]
-    end ; for files
   endif ; over filenames found check
 end
 

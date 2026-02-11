@@ -59,7 +59,7 @@ pro tracers_aci_tplot, filenames
         end ; over energies
       end ; over times
 
-      espec = transpose(total(data.y, 2)) / 16.
+      espec = transpose(total(dat.y, 2)) / 16.
 
       store_data, 'ts2_l2_aci_an_eflux', data = {x: dat.x, y: ave_flux, v: energies}, limit = {ylog: 1, zlog: 1, ytitle: 'Energy [eV]', ztitle: 'Diff. En. Flux', spec: 1, ystyle: 1, no_interp: 1}
       stop

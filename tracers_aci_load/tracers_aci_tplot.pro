@@ -7,6 +7,9 @@
 ;   filenames: bidirectional, required, any
 ;     Placeholder docs for argument, keyword, or property
 ;
+; :Requirements:
+;   - get_highest_version.pro from ACE load routines
+;
 ;-
 pro tracers_aci_tplot, filenames
   compile_opt idl2

@@ -249,15 +249,16 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
     if tplot then begin
       tracers_efi_tplot, data_filenames, spacecraft = spacecraft, level = level
 
-      ; check time range
-      if keyword_set(trange) then begin
-        tr = timerange()
-        tplot_names, names = tvars
-        if n_elements(tvars) eq 0 then tvars = [''] ; if no tplot variables, make it an array with one empty string to avoid errors
-        if n_elements(tr) eq 2 and (tvars[0] gt '') then begin
-          time_clip, tnames(tvars), trange[0], trange[1], /replace
-        end
-      end ; clip time to desired range
+      ; ; check time range
+      ; if keyword_set(trange) then begin
+      ; tr = timerange()
+      ; tplot_names, names = tvars
+      ; if n_elements(tvars) eq 0 then tvars = [''] ; if no tplot variables, make it an array with one empty string to avoid errors
+      ; itmp = where(tvars.contains(strlowcase(instrument)), ncounts, /null)
+      ; if n_elements(tr) eq 2 and (tvars[0] gt '') and (ncounts gt 0) then begin
+      ; time_clip, tnames(tvars[itmp]), trange[0], trange[1], /replace
+      ; end
+      ; end ; clip time to desired range
     endif ; tplot
   endfor ; over dates/files
 end

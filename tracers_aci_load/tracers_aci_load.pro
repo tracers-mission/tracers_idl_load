@@ -83,7 +83,7 @@ pro tracers_aci_load, remote_path = remote_path, local_path = local_path, $
 
     if (total(level.contains('l2')) ge 1) then begin ; level 2
       aci_path = '/flight/ACI/' + strlowcase(spacecraft) + '/l2/aci/ipd/' ;+ yyyy + '/' + mm + '/'
-      fn_i = ace_path + strlowcase(spacecraft) + '_l2_aci_ipd_' + dates[i] + '_v' + version + '.cdf'
+      fn_i = aci_path + strlowcase(spacecraft) + '_l2_aci_ipd_' + dates[i] + '_v' + version + '.cdf'
 
       dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
         url_username = url_username, url_password = url_password)
@@ -94,7 +94,7 @@ pro tracers_aci_load, remote_path = remote_path, local_path = local_path, $
 
     if (total(level.contains('l1a')) ge 1) then begin ; level 1a
       aci_path = '/flight/ACI/' + strlowcase(spacecraft) + '/l1a/aci/ipd/' ;+ yyyy + '/' + mm + '/'
-      fn_i = ace_path + strlowcase(spacecraft) + '_l1a_aci_ipd_' + dates[i] + '_v' + version + '.cdf'
+      fn_i = aci_path + strlowcase(spacecraft) + '_l1a_aci_ipd_' + dates[i] + '_v' + version + '.cdf'
 
       dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
         url_username = url_username, url_password = url_password)

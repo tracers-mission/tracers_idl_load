@@ -102,11 +102,11 @@ pro tracers_aci_load, remote_path = remote_path, local_path = local_path, $
       ; if user specifies, then return filenames of where the data has been saved to back to the user
       data_filenames = [data_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
     end ; level 3
-  endfor ; dates
 
-  if tplot and (total(level.contains('l2')) ge 1) then begin
-    dirname = file_dirname(data_filenames, /mark_directory)
-    dirname = dirname[0].remove(-8)
-    dtmp = strmid(dates, 2)
-  end ; tplot
+    if tplot and (total(level.contains('l2')) ge 1) then begin
+      dirname = file_dirname(data_filenames, /mark_directory)
+      dirname = dirname[0].remove(-8)
+      dtmp = strmid(dates, 2)
+    end ; tplot
+  endfor ; loop over dates
 end

@@ -92,6 +92,17 @@ pro tracers_aci_load, remote_path = remote_path, local_path = local_path, $
       data_filenames = [data_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
     end ; level 2
 
+    if (total(level.contains('l1b')) ge 1) then begin ; level 1b
+      aci_path = '/flight/SOC/' + strupcase(spacecraft) + '/L1B/ACI/' + yyyy + '/' + mm + '/' + dd + '/'
+      fn_i = aci_path + strlowcase(spacecraft) + '_l1b_aci_ipd_x*_' + dates[i] + '_v' + version + '.cdf' ; ipd
+
+      dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
+        url_username = url_username, url_password = url_password)
+
+      ; if user specifies, then return filenames of where the data has been saved to back to the user
+      data_filenames = [data_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
+    end ; level 2
+
     if (total(level.contains('l1a')) ge 1) then begin ; level 1a
       aci_path = '/flight/ACI/' + strlowcase(spacecraft) + '/l1a/aci/ipd/' ;+ yyyy + '/' + mm + '/'
       fn_i = aci_path + strlowcase(spacecraft) + '_l1a_aci_ipd_' + dates[i] + '_v' + version + '.cdf'
@@ -107,7 +118,7 @@ pro tracers_aci_load, remote_path = remote_path, local_path = local_path, $
       ; dirname = file_dirname(data_filenames, /mark_directory)
       ; dirname = dirname[0].remove(-8)
       ; dtmp = strmid(dates, 2)
-      tracers_aci_tplot, data_filenames
+      tracers_aci_tplot, data_filenames, sv = strlowcase(spacecraft)
     end ; tplot
   endfor ; loop over dates
 end

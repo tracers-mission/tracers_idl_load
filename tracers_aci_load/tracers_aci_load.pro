@@ -118,7 +118,7 @@ pro tracers_aci_load, remote_path = remote_path, local_path = local_path, $
       ; dirname = file_dirname(data_filenames, /mark_directory)
       ; dirname = dirname[0].remove(-8)
       ; dtmp = strmid(dates, 2)
-      tracers_aci_tplot, data_filenames, sv = strlowcase(spacecraft)
+      tracers_aci_tplot, data_filenames, spacecraft = strlowcase(spacecraft)
     end ; tplot
   endfor ; loop over dates
 end

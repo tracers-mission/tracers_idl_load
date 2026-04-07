@@ -268,5 +268,33 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
         options, 'ts1_efi_hf_spec_filt_kHz', 'y_no_interp', 1
       endif ; ts1 EHF
     endif ; level eq 'l2'
+
+    ; ============================================
+    ; Level 1b Data Derived Variables
+    ; ============================================
+    if level eq 'l1b' then begin
+      options, 'ts?_l1b_edc*_roi', labflag = 1, labels = ['EX', 'EY', 'EZ'], colors = ['r', 'g', 'b']
+      options, 'ts?_l1b_ehf', spec = 1, ylog = 1, zlog = 1
+
+      if (total(spacecraft.contains('ts1')) ge 1) then begin
+        ; eac
+        ; get_data, 'ts1_l1b_eac', data = dat
+        ; ch1 = reform(dat.y[*, 0, *]) ; channel 1
+        ; ch2 = reform(dat.y[*, 1, *]) ; channel 2
+        ; store_Data, 'ts1_l1b_eac_ch1', data = {x: dat.x, y: ch1, v: dat.v}
+        ; store_Data, 'ts1_l1b_eac_ch2', data = {x: dat.x, y: ch2, v: dat.v}
+      endif ; ts1
+
+      if (total(spacecraft.contains('ts2')) ge 1) then begin
+        ; eac
+        ; get_data, 'ts2_l1b_eac', data = dat
+        ; ch1 = reform(dat.y[*, 0, *]) ; channel 1
+        ; ch2 = reform(dat.y[*, 1, *]) ; channel 2
+        ; store_Data, 'ts2_l1b_eac_ch1', data = {x: dat.x, y: ch1, v: dat.v}
+        ; store_Data, 'ts2_l1b_eac_ch2', data = {x: dat.x, y: ch2, v: dat.v}
+      endif ; ts2
+
+      options, 'ts?_l1b_eac_ch*', spec = 1
+    endif ; level eq 'l1b'
   endif ; if filenames are given in string format
 end

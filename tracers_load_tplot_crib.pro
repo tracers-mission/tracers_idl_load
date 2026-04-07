@@ -5,8 +5,8 @@
 ; pro tracers_load_tplot_crib
 compile_opt idl2
 
-tracers_login
 tracers_init ; set your TRACERS portal username and password
+tracers_login ; may need to switch order of these two lines depending on if you have your username and password set as environment variables or not
 
 timespan, '2025-09-27', 1 ; one day of data
 

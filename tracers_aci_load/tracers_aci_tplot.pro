@@ -8,18 +8,20 @@
 ;     Placeholder docs for argument, keyword, or property
 ;
 ; :Keywords:
-;   sv: bidirectional, optional, any
+;   level: bidirectional, optional, any
+;     Placeholder docs for argument, keyword, or property
+;   spacecraft: bidirectional, optional, any
 ;     Placeholder docs for argument, keyword, or property
 ;
 ; :Requirements:
 ;   - get_highest_version.pro from ACE load routines
 ;
 ;-
-pro tracers_aci_tplot, filenames, sv = sv
+pro tracers_aci_tplot, filenames, spacecraft = spacecraft, level = level
   compile_opt idl2
 
-  if undefined(sv) then sv = 'ts2' ; default to ts2
-  if n_elements(sv) eq 1 and (isa(sv, /array, /string)) then sv = sv[0]
+  if undefined(spacecraft) then spacecraft = 'ts2' ; default to ts2
+  if n_elements(spacecraft) eq 1 and (isa(spacecraft, /array, /string)) then spacecraft = spacecraft[0]
 
   ; cdf_leap_second_init
 
@@ -52,7 +54,7 @@ pro tracers_aci_tplot, filenames, sv = sv
 
     ; differential energy flux!
     ; ------------------------------------
-    tmp_vname = sv + '_l2_aci_tscs_def'
+    tmp_vname = spacecraft + '_l2_aci_tscs_def'
     get_data, tmp_vname, data = dat, limit = lim, dlimit = dlim ; differential energy flux
     ntimes = n_elements(dat.x)
     nen = n_elements(dat.v1)
@@ -78,16 +80,16 @@ pro tracers_aci_tplot, filenames, sv = sv
     ; store_data, 'ts2_l2_aci_an_eflux', data = {x: dat.x, y: ave_flux, v: energies}, limit = {ylog: 1, zlog: 1, ytitle: 'Energy [eV]', ztitle: 'Diff. En. Flux', spec: 1, ystyle: 1, no_interp: 1}
 
     espec = total(dat.y, 3) / 16.
-    store_Data, sv + '_l2_aci_en_eflux', data = {x: dat.x, y: espec, v: energies}, $
+    store_Data, spacecraft + '_l2_aci_en_eflux', data = {x: dat.x, y: espec, v: energies}, $
       limit = {ylog: 1, zlog: 1, ytitle: 'Energy [eV]', ztitle: 'Diff. En. Flux', $
         spec: 1, yrange: [8., 2.e4], ystyle: 1} ; , ystyle: 1, no_interp: 1}
 
     aspec = total(dat.y, 2) / 47.
-    store_data, sv + '_l2_aci_an_eflux', data = {x: dat.x, v: angles, y: aspec, zlog: 1, ytitle: 'Anode Angle', ztitle: 'Diff. En. Flux', spec: 1, ystyle: 1} ; , no_interp: 1}
+    store_data, spacecraft + '_l2_aci_an_eflux', data = {x: dat.x, v: angles, y: aspec, zlog: 1, ytitle: 'Anode Angle', ztitle: 'Diff. En. Flux', spec: 1, ystyle: 1} ; , no_interp: 1}
 
     ; COUNTS!
     ; ------------------------------------
-    tmp_vname = sv + '_l2_aci_tscs_def_sorted_counts'
+    tmp_vname = spacecraft + '_l2_aci_tscs_def_sorted_counts'
     get_data, tmp_vname, data = dat, limit = lim, dlimit = dlim ; counts
     ntimes = n_elements(dat.x)
     nen = n_elements(dat.v1)
@@ -111,10 +113,10 @@ pro tracers_aci_tplot, filenames, sv = sv
       end ; angles
     end ; over times
     especc = total(dat.y, 3) / 16.
-    store_Data, sv + '_l2_aci_en_counts', data = {x: dat.x, y: especc, v: energies}, limit = {ylog: 1, zlog: 1, ytitle: 'Energy [eV]', ztitle: 'Avg Counts', spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]} ; , no_interp: 1}
+    store_Data, spacecraft + '_l2_aci_en_counts', data = {x: dat.x, y: especc, v: energies}, limit = {ylog: 1, zlog: 1, ytitle: 'Energy [eV]', ztitle: 'Avg Counts', spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]} ; , no_interp: 1}
 
     aspecc = total(dat.y, 2) / 47.
-    store_Data, sv + '_l2_aci_an_counts', data = {x: dat.x, y: aspecc, v: angles}, limit = {ylog: 0, zlog: 1, ytitle: 'Anode Angle', ztitle: 'Avg Counts', spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]} ; , no_interp: 1}
+    store_Data, spacecraft + '_l2_aci_an_counts', data = {x: dat.x, y: aspecc, v: angles}, limit = {ylog: 0, zlog: 1, ytitle: 'Anode Angle', ztitle: 'Avg Counts', spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]} ; , no_interp: 1}
 
     ; end ; for files
   endif ; over filenames found check

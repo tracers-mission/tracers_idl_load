@@ -8,8 +8,6 @@ loadcv, 39 ; load rainbow+white color table
 
 ; initialize for TRACERS (team only)
 tracers_init
-tracers_login ; set your TRACERS portal username and password
-
 ; compile
 .compile tracers_ace_load
 .compile tra_ace_load_l2_data

@@ -10,7 +10,6 @@ loadcv, 39  ; load rainbow+white color table
 
 ; initialize for TRACERS (team only)
 tracers_init
-tracers_login ; set your TRACERS portal username and password
 
 ; download the data
 timespan, '2025-09-26', 1 ; one day of data

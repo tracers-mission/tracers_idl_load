@@ -1,7 +1,6 @@
 ; initialize for TRACERS (team only)
 compile_opt idl2
 tracers_init
-tracers_login ; set your TRACERS portal username and password
 
 ; compile
 .compile tracers_aci_load

@@ -3,7 +3,6 @@ compile_opt idl2
 ; This is still being worked on!!
 
 tracers_init ; set your TRACERS portal username and password
-tracers_login
 
 timespan, '2025-09-27', 1 ; one day of data
 

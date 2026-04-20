@@ -7,6 +7,12 @@ timespan, '2025-09-27', 1 ; one day of data
 ; load ROIs for TS1, TS2, and tandem for the same time period (default: spacecraft='all')
 rois = tracers_roi_load()
 
+; Note that this returns a structure with three sub-structures: rois.ts1, rois.ts2, and rois.tandem,
+; each with their own tstart and tend arrays for the ROIs for that spacecraft or for tandem ROIs.
+print, rois.ts1.tstart ; all TS1 start times in the window
+print, rois.ts2.tend ; all TS2 end times in the window
+print, rois.tandem.tstart ; all tandem start times in the window
+
 ; -----------------------------------
 ; TS1 ROIs between 2026-01-19 and 2026-01-20
 ; -----------------------------------

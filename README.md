@@ -66,6 +66,13 @@ tracers_efi_load, spacecraft='ts1', level='l1b', datatype = ['edc','hsk'] ; load
 
 tracers_ace_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads data for the time span given to your specified local path on external HDD and tplots
 
+; ACI Load/tplot
+;-----------------------------------
+tracers_aci_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads data for the time span given to your specified local path on external HDD and tplots
+; tplot data from a given path
+tracers_aci_tplot, ['/Volumes/wvushaverhd/TRACERS_data/flight/ACI/ts2/l2/aci/ipd/ts2_l2_aci_ipd_20250926_v1.0.0.cdf']
+
+
 ; Solar Wind Data Load
 ;-----------------------------------
 tracers_sw_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; load solar wind data onto external HD

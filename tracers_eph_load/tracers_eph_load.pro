@@ -6,7 +6,7 @@
 ; :Keywords:
 ;   data_filenames: bidirectional, optional, Array<String>
 ;     Placeholder docs for argument, keyword, or property
-;   datatype: in, optional, str arr
+;   datatype: in, optional, str | arr
 ;     ['def','predict']
 ;     datatype handle for file (defaults to definitive solutions for ephemeris data)
 ;   downloadonly: in, optional, any
@@ -20,7 +20,7 @@
 ;   spacecraft: in, optional, Array<String>
 ;     ['ts1','ts2']
 ;     spacecraft handle to put in file (defaults to 'ts2')
-;   trange: in, optional, str or double arr
+;   trange: in, optional, str | or | Double | arr
 ;     load data for all files within a given range (one day granularity,
 ;     supercedes file list, if not set then 'timerange' will be called)
 ;   url_password: in, optional, str

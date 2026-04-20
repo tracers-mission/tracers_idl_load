@@ -15,6 +15,8 @@
 ;     Placeholder docs for argument, keyword, or property
 ;   remote_data_dir: in, optional, str
 ;     Placeholder docs for argument, keyword, or property
+;   reset: bidirectional, optional, any
+;     Placeholder docs for argument, keyword, or property
 ;   url_password: in, optional, str
 ;     password (case-sensitive) to get into the TRACERS user portal
 ;   url_username: in, optional, str
@@ -29,7 +31,9 @@
 ;     setenv, 'TRACERS_USER_PASS=input-your-username:your-password-here'
 ;
 ;-
-pro tracers_init, url_username = url_username, url_password = url_password, local_data_dir = local_data_dir, remote_data_dir = remote_data_dir, no_download = no_download
+pro tracers_init, reset = reset, url_username = url_username, url_password = url_password, $
+  local_data_dir = local_data_dir, remote_data_dir = remote_data_dir, $
+  no_download = no_download
   compile_opt idl2
 
   ; You can directly set your username and password as environment variables on your machine
@@ -45,10 +49,13 @@ pro tracers_init, url_username = url_username, url_password = url_password, loca
   ; Check if !tracers already exists.
   defsysv, '!tracers', exists = exists
 
-  ; If !fast does not exist, create !fast.
+  ; If !tracers does not exist, create it.
   if not keyword_set(exists) then begin
     defsysv, '!tracers', file_retrieve(/structure_format)
   endif
+
+  if keyword_set(reset) then !tracers.init = 0 ; reset the initialization flag if requested
+  if !tracers.init ne 0 then return ; already initialized, so exit the program
 
   !tracers = file_retrieve(/structure_format)
 
@@ -87,9 +94,12 @@ pro tracers_init, url_username = url_username, url_password = url_password, loca
     ; also change data directory to teams if you have credentials to access that
     !tracers.remote_data_dir = 'https://tracers-portal.physics.uiowa.edu/teams' ; default remote data directory
     if keyword_set(remote_data_dir) then !tracers.remote_data_dir = remote_data_dir
+  end else begin
+    print, 'No TRACERS url username and password set, so using public data only.'
+    print, 'If you would like to access the internal teams data, please set your credentials with the url_username and url_password keywords.'
+    print, ''
+    !tracers.remote_data_dir = 'https://tracers-portal.physics.uiowa.edu/' ; default remote data directory
   end
-
-  ; spd_graphics_config.pro ; set some default graphics settings for tplots?
 end
 
 ; program

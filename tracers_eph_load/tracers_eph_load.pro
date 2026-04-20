@@ -40,6 +40,19 @@
 ; :Created by:
 ;   Sky Shaver    Jan 2026
 ;
+; :Dependencies:
+;   tracers_eph_tplot - creates tplot variables from downloaded CDF files
+;
+; :Spedas dependencies:
+;   spd_download  - downloads CDF files from TRACERS portal with authentication
+;   timerange     - gets the current time window when trange keyword is not provided
+;   time_double   - converts string trange to double epoch
+;   time_string   - converts double epoch to YYYYMMDD date strings for filenames
+;   undefined     - checks whether optional keywords were supplied
+;   cdf2tplot     - loads CDF files into tplot variables (called via tracers_eph_tplot)
+;   tnames        - retrieves tplot variable name list (called via tracers_eph_tplot)
+;   dprint        - debug/warning printing (called via tracers_eph_tplot)
+;
 ;-
 pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
   downloadonly = downloadonly, trange = trange, datatype = datatype, $

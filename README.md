@@ -19,8 +19,7 @@ conventions for data download and loading. These routines are regularly updated,
 - Can only load in one spacecraft at a time (TS1 or TS2)
 
 ## Future Capabilities?
-- MAG, MSC, MAGIC, ACI
-- Load in both spacecraft data (ts1 and ts2)
+- MAG, MSC, MAGIC
 - Email Sky with what you want! <skylar.shaver@mail.wvu.edu>
 
 ## Contributors
@@ -29,10 +28,25 @@ A special thank you to contributors to this code: Dr. John Bonnell, Dr. Marit Oi
 ## Basic Usage
 ```idl
 
-; Update the tracers_init file to your benefit!
-tracers_init
+; Initialize the IDL Session for TRACERS
+;----------------------------------------------
 
+; Update the tracers_init file to your benefit! (do this only once, or if you'd like to reset the session)
+tracers_init
+tracers_init, url_username='team-username', url_password='team-password'
+tracers_init, local_data_dir='path/to/my/external/harddrive/', remote_data_dir='https://tracers-portal.physics.uiowa.edu/'
+
+; Set time span you'd like to get data for
 timespan, '2025-09-26', 1 ; one day of data
+
+; Load time spans where TS1, TS2, and tandem measurements fall 
+; within the region of interest (ROI)
+;-----------------------------------
+rois = tracers_roi_load() ; returns structure
+print, rois.ts1.tstart ; all TS1 start times in the window
+print, rois.ts1.tstart[0] + '  -->  ' + rois.ts1.tend[0] ; one ROI timespan
+print, rois.ts2.tend ; all TS2 end times in the window
+print, rois.tandem.tstart ; all tandem start times in the window
 
 ; EFI Load Routine
 ;-----------------------------------

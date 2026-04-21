@@ -89,7 +89,9 @@ pro tracers_init, reset = reset, url_username = url_username, url_password = url
   if defined(url_username) and defined(url_password) then begin
     ; set username and password for TRACERS portal access
     setenv, 'TRACERS_USER_PASS=' + url_username + ':' + url_password
+    print, ''
     print, 'TRACERS url username and password set'
+    print, ''
 
     ; also change data directory to teams if you have credentials to access that
     !tracers.remote_data_dir = 'https://tracers-portal.physics.uiowa.edu/teams' ; default remote data directory

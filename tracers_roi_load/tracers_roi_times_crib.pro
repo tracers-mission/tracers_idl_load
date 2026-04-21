@@ -14,9 +14,9 @@ print, rois.ts2.tend ; all TS2 end times in the window
 print, rois.tandem.tstart ; all tandem start times in the window
 
 ; -----------------------------------
-; TS1 ROIs between 2026-01-19 and 2026-01-20
+; TS1 ROIs between 2026-01-01 and 2026-01-02
 ; -----------------------------------
-rois = tracers_roi_load(spacecraft = 'ts1', trange = ['2026-01-19', '2026-01-20'])
+rois = tracers_roi_load(spacecraft = 'ts1', trange = ['2026-01-01', '2026-01-02'])
 
 if rois.ts1.tstart[0] ne '' then begin
   n = n_elements(rois.ts1.tstart)
@@ -24,9 +24,9 @@ if rois.ts1.tstart[0] ne '' then begin
 endif else print, 'No TS1 ROIs found in the requested time range.'
 
 ; -----------------------------------
-; TS2 ROIs between 2026-01-19 and 2026-01-20
+; TS2 ROIs between 2026-01-01 and 2026-01-02
 ; -----------------------------------
-rois = tracers_roi_load(spacecraft = 'ts2', trange = ['2026-01-19', '2026-01-20'])
+rois = tracers_roi_load(spacecraft = 'ts2', trange = ['2026-01-01', '2026-01-02'])
 
 if rois.ts2.tstart[0] ne '' then begin
   n = n_elements(rois.ts2.tstart)
@@ -34,9 +34,9 @@ if rois.ts2.tstart[0] ne '' then begin
 endif else print, 'No TS2 ROIs found in the requested time range.'
 
 ; -----------------------------------
-; Tandem ROIs between 2026-01-19 and 2026-01-20
+; Tandem ROIs between 2026-01-01 and 2026-01-02
 ; -----------------------------------
-rois = tracers_roi_load(spacecraft = 'tandem', trange = ['2026-01-19', '2026-01-20'])
+rois = tracers_roi_load(spacecraft = 'tandem', trange = ['2026-01-01', '2026-01-02'])
 
 if rois.tandem.tstart[0] ne '' then begin
   n = n_elements(rois.tandem.tstart)

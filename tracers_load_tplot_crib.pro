@@ -29,6 +29,12 @@ tracers_sw_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; load solar 
 ; -----------------------------------
 tracers_eph_load, datatype = ['pred', 'def'] ; loads predictive and defnitive data
 
+; Load the ROI time periods for TS1, TS2, and tandem for the same time period (default: spacecraft='all')
+; -----------------------------------
+rois = tracers_roi_load(spacecraft = 'all')
+ts1_roi_start_times = rois.ts1.tstart
+ts1_roi_end_times = rois.ts1.tend
+
 ; Tplot some stuff
 ; ----------------------------------
 options, 'ts2_ead_mlt_eph_def', ytitle = 'MLT (def)'

@@ -51,8 +51,8 @@ print, rois.tandem.tstart ; all tandem start times in the window
 ; EFI Load Routine
 ;-----------------------------------
 tracers_efi_load, local_path = '/Users/SkyShaver/Data/TRACERS_data/' ; loads l2 data for the time span given to your specified local path
-tracers_efi_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads l2 data for the time span given to your specified local path on external HDD
-tracers_efi_load, url_username = 'tracers-username', url_password = 'tracers-password' ; use these keywords if you havent set the 'TRACERS_USER_PASS' environment variable
+tracers_efi_load, local_path = '/Volumes/MyExternalHardDrive/TRACERS_data/' ; loads l2 data for the time span given to your specified local path on external HDD
+tracers_efi_load, url_username = 'tracers-username', url_password = 'tracers-password' ; use these keywords if you havent set the 'TRACERS_USER_PASS' environment variable with tracers_init.pro
 
 tracers_efi_load, spacecraft='ts1', level='l1b', datatype = ['edc','hsk'] ; load level-1B DC electric fields and housekeeping data from ts1
 
@@ -64,18 +64,18 @@ tracers_efi_load, spacecraft='ts1', level='l1b', datatype = ['edc','hsk'] ; load
 .compile tra_ace_load_l2_data
 .compile tra_ace_make_info_str
 
-tracers_ace_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads data for the time span given to your specified local path on external HDD and tplots
+tracers_ace_load ; loads data for the time span given to your specified local path on external HDD and tplots
 
 ; ACI Load/tplot
 ;-----------------------------------
-tracers_aci_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; loads data for the time span given to your specified local path on external HDD and tplots
+tracers_aci_load ; loads data for the time span given to your specified local path on external HDD and tplots
 ; tplot data from a given path
-tracers_aci_tplot, ['/Volumes/wvushaverhd/TRACERS_data/flight/ACI/ts2/l2/aci/ipd/ts2_l2_aci_ipd_20250926_v1.0.0.cdf']
+tracers_aci_tplot, ['/Volumes/MyExternalHardDrive/TRACERS_data/flight/ACI/ts2/l2/aci/ipd/ts2_l2_aci_ipd_20250926_v1.0.0.cdf']
 
 
 ; Solar Wind Data Load
 ;-----------------------------------
-tracers_sw_load, local_path = '/Volumes/wvushaverhd/TRACERS_data/' ; load solar wind data onto external HD
+tracers_sw_load, local_path = '/Volumes/MyExternalHardDrive/TRACERS_data/' ; load solar wind data onto external HD
 
 ; Ephemeris/Orbit Data Load
 ;-----------------------------------

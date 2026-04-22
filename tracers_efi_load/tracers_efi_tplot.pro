@@ -132,25 +132,29 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
       ; VDC options
       ; ---------------------------------------------
       ; VDC options and derived variables.
-      if (total(spacecraft.contains('ts2')) ge 1) then begin
+      if dovdc and (total(spacecraft.contains('ts2')) ge 1) then begin
         get_data, 'ts2_l2_vdc_xminus', data = dxm, limits = lxm, dlimits = dlxm
         get_data, 'ts2_l2_vdc_xplus', data = dxp, limits = lxp, dlimits = dlxp
         get_data, 'ts2_l2_vdc_yminus', data = dym, limits = lym, dlimits = dlym
         get_data, 'ts2_l2_vdc_yplus', data = dyp, limits = lyp, dlimits = dlyp
 
-        store_data, 'ts2_l2_vdc_xavg', data = {x: dxm.x, y: 0.5 * (dxm.y + dxp.y)}
-        store_data, 'ts2_l2_vdc_yavg', data = {x: dym.x, y: 0.5 * (dym.y + dyp.y)}
-        store_data, 'ts2_l2_vdc_xyavg', data = {x: dxm.x, y: 0.25 * (dxm.y + dxp.y + dym.y + dyp.y)}
+        if isa(dxm, 'struct') and isa(dxp, 'struct') and isa(dym, 'struct') and isa(dyp, 'struct') then begin
+          store_data, 'ts2_l2_vdc_xavg', data = {x: dxm.x, y: 0.5 * (dxm.y + dxp.y)}
+          store_data, 'ts2_l2_vdc_yavg', data = {x: dym.x, y: 0.5 * (dym.y + dyp.y)}
+          store_data, 'ts2_l2_vdc_xyavg', data = {x: dxm.x, y: 0.25 * (dxm.y + dxp.y + dym.y + dyp.y)}
+        endif
       endif ; ts2
-      if (total(spacecraft.contains('ts1')) ge 1) then begin
+      if dovdc and (total(spacecraft.contains('ts1')) ge 1) then begin
         get_data, 'ts1_l2_vdc_xminus', data = dxm, limits = lxm, dlimits = dlxm
         get_data, 'ts1_l2_vdc_xplus', data = dxp, limits = lxp, dlimits = dlxp
         get_data, 'ts1_l2_vdc_yminus', data = dym, limits = lym, dlimits = dlym
         get_data, 'ts1_l2_vdc_yplus', data = dyp, limits = lyp, dlimits = dlyp
 
-        store_data, 'ts1_l2_vdc_xavg', data = {x: dxm.x, y: 0.5 * (dxm.y + dxp.y)}
-        store_data, 'ts1_l2_vdc_yavg', data = {x: dym.x, y: 0.5 * (dym.y + dyp.y)}
-        store_data, 'ts1_l2_vdc_xyavg', data = {x: dxm.x, y: 0.25 * (dxm.y + dxp.y + dym.y + dyp.y)}
+        if isa(dxm, 'struct') and isa(dxp, 'struct') and isa(dym, 'struct') and isa(dyp, 'struct') then begin
+          store_data, 'ts1_l2_vdc_xavg', data = {x: dxm.x, y: 0.5 * (dxm.y + dxp.y)}
+          store_data, 'ts1_l2_vdc_yavg', data = {x: dym.x, y: 0.5 * (dym.y + dyp.y)}
+          store_data, 'ts1_l2_vdc_xyavg', data = {x: dxm.x, y: 0.25 * (dxm.y + dxp.y + dym.y + dyp.y)}
+        endif
       endif ; over spacecraft 1
       ; set VDC variable colors
       options, 'ts?_l2_vdc_*', colors = ['r']
@@ -160,38 +164,38 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
       ; conversion formula, BIAS DAC setting to IBIAS in uA:  IBIAS (uA/sensor) = -22.0 uA/sensor + (10.74e-3 (uA/sensor)/(DAC count))*efi_bias?_dig.
       ibias_0 = -22.0 ; uA/sensor.
       dibias_ddac = 10.74e-3 ; (uA/sensor)/(DAC count)
-      if (total(spacecraft.contains('ts2')) ge 1) then begin
+      if dohsk and (total(spacecraft.contains('ts2')) ge 1) then begin
         get_data, 'ts2_l2_efi_bias1_dig', data = d, limits = l, dlimits = dl
-        store_data, 'ts2_l2_efi_bias1_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
+        if isa(d, 'struct') then store_data, 'ts2_l2_efi_bias1_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
 
         get_data, 'ts2_l2_efi_bias2_dig', data = d, limits = l, dlimits = dl
-        store_data, 'ts2_l2_efi_bias2_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
+        if isa(d, 'struct') then store_data, 'ts2_l2_efi_bias2_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
 
         get_data, 'ts2_l2_efi_bias3_dig', data = d, limits = l, dlimits = dl
-        store_data, 'ts2_l2_efi_bias3_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
+        if isa(d, 'struct') then store_data, 'ts2_l2_efi_bias3_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
 
         get_data, 'ts2_l2_efi_bias4_dig', data = d, limits = l, dlimits = dl
-        store_data, 'ts2_l2_efi_bias4_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
+        if isa(d, 'struct') then store_data, 'ts2_l2_efi_bias4_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
       endif ; ts2 HSK
-      if (total(spacecraft.contains('ts1')) ge 1) then begin
+      if dohsk and (total(spacecraft.contains('ts1')) ge 1) then begin
         get_data, 'ts1_l2_efi_bias1_dig', data = d, limits = l, dlimits = dl
-        store_data, 'ts1_l2_efi_bias1_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
+        if isa(d, 'struct') then store_data, 'ts1_l2_efi_bias1_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
 
         get_data, 'ts1_l2_efi_bias2_dig', data = d, limits = l, dlimits = dl
-        store_data, 'ts1_l2_efi_bias2_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
+        if isa(d, 'struct') then store_data, 'ts1_l2_efi_bias2_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
 
         get_data, 'ts1_l2_efi_bias3_dig', data = d, limits = l, dlimits = dl
-        store_data, 'ts1_l2_efi_bias3_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
+        if isa(d, 'struct') then store_data, 'ts1_l2_efi_bias3_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
 
         get_data, 'ts1_l2_efi_bias4_dig', data = d, limits = l, dlimits = dl
-        store_data, 'ts1_l2_efi_bias4_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
+        if isa(d, 'struct') then store_data, 'ts1_l2_efi_bias4_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
       endif ; ts1 HSK
       ; set HSK bias variable colors
       options, 'ts?_l2_efi_bias?_*', colors = ['r']
 
       ; EHF options and derived variables.
       ; ---------------------------------------------
-      if (total(spacecraft.contains('ts2')) ge 1) then begin
+      if doehf and (total(spacecraft.contains('ts2')) ge 1) then begin
         ; get_data, 'ts2_l2_hf_spec', data = d, limits = l, dlimits = dl
 
         ; options, 'ts2_l2_hf_spec', 'spec', 1
@@ -201,38 +205,40 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
         ; options, 'ts2_l2_hf_spec', 'zrange', [1.0e-10, 1.0e-4]
 
         get_data, 'ts2_l2_hf_spec', data = d, limits = l, dlimits = dl
-        nbins = 4097l
-        ff_bin = findgen(nbins)
-        hf_spec_moment = moment(d.y, dimension = 1)
-        spec_sig = hf_spec_moment[*, 0l] / sqrt(hf_spec_moment[*, 1l])
-        spec_sig_lim = 2.0
-        idx = where(spec_sig gt spec_sig_lim, icnt)
-        print, icnt
+        if isa(d, 'struct') then begin
+          nbins = 4097l
+          ff_bin = findgen(nbins)
+          hf_spec_moment = moment(d.y, dimension = 1)
+          spec_sig = hf_spec_moment[*, 0l] / sqrt(hf_spec_moment[*, 1l])
+          spec_sig_lim = 2.0
+          idx = where(spec_sig gt spec_sig_lim, icnt)
+          print, icnt
 
-        hf_spec_mean = hf_spec_moment[*, 0l]
-        hf_spec_mean_filt = hf_spec_mean
+          hf_spec_mean = hf_spec_moment[*, 0l]
+          hf_spec_mean_filt = hf_spec_mean
 
-        if icnt gt 0l then hf_spec_mean_filt[idx] = !values.f_nan
+          if icnt gt 0l then hf_spec_mean_filt[idx] = !values.f_nan
 
-        d_filt = d
-        d_filt.y[*, idx] = !values.f_nan
-        d_filt.v = 10.0e3 * findgen(4097l) / (4096.0) ; frequency bins, kHz.
+          d_filt = d
+          d_filt.y[*, idx] = !values.f_nan
+          d_filt.v = 10.0e3 * findgen(4097l) / (4096.0) ; frequency bins, kHz.
 
-        store_data, 'ts2_efi_hf_spec_filt_kHz', data = d_filt
-        options, 'ts2_efi_hf_spec_filt_kHz', 'spec', 1
-        options, 'ts2_efi_hf_spec_filt_kHz', 'zrange', [1.0e-8, 1.0e-6]
-        options, 'ts2_efi_hf_spec_filt_kHz', 'zlog', 1
-        options, 'ts2_efi_hf_spec_filt_kHz', 'yrange', [10., 2000.]
-        options, 'ts2_efi_hf_spec_filt_kHz', 'x_no_interp', 1
-        options, 'ts2_efi_hf_spec_filt_kHz', 'y_no_interp', 1
+          store_data, 'ts2_efi_hf_spec_filt_kHz', data = d_filt
+          options, 'ts2_efi_hf_spec_filt_kHz', 'spec', 1
+          options, 'ts2_efi_hf_spec_filt_kHz', 'zrange', [1.0e-8, 1.0e-6]
+          options, 'ts2_efi_hf_spec_filt_kHz', 'zlog', 1
+          options, 'ts2_efi_hf_spec_filt_kHz', 'yrange', [10., 2000.]
+          options, 'ts2_efi_hf_spec_filt_kHz', 'x_no_interp', 1
+          options, 'ts2_efi_hf_spec_filt_kHz', 'y_no_interp', 1
 
-        tt1 = d.x[0l]
-        tt2 = d.x[-1l]
-        st1 = time_string(tt1)
-        st2 = time_string(tt2)
+          tt1 = d.x[0l]
+          tt2 = d.x[-1l]
+          st1 = time_string(tt1)
+          st2 = time_string(tt2)
+        endif
       endif ; ts2 EHF
 
-      if (total(spacecraft.contains('ts1')) ge 1) then begin
+      if doehf and (total(spacecraft.contains('ts1')) ge 1) then begin
         ; get_data, 'ts1_l2_hf_spec', data = d, limits = l, dlimits = dl
 
         ; options, 'ts1_l2_hf_spec', 'spec', 1
@@ -242,30 +248,32 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
         ; options, 'ts1_l2_hf_spec', 'zrange', [1.0e-10, 1.0e-4]
 
         get_data, 'ts1_l2_hf_spec', data = d, limits = l, dlimits = dl
-        nbins = 4097l
-        ff_bin = findgen(nbins)
-        hf_spec_moment = moment(d.y, dimension = 1)
-        spec_sig = hf_spec_moment[*, 0l] / sqrt(hf_spec_moment[*, 1l])
-        spec_sig_lim = 2.0
-        idx = where(spec_sig gt spec_sig_lim, icnt)
-        print, icnt
+        if isa(d, 'struct') then begin
+          nbins = 4097l
+          ff_bin = findgen(nbins)
+          hf_spec_moment = moment(d.y, dimension = 1)
+          spec_sig = hf_spec_moment[*, 0l] / sqrt(hf_spec_moment[*, 1l])
+          spec_sig_lim = 2.0
+          idx = where(spec_sig gt spec_sig_lim, icnt)
+          print, icnt
 
-        hf_spec_mean = hf_spec_moment[*, 0l]
-        hf_spec_mean_filt = hf_spec_mean
+          hf_spec_mean = hf_spec_moment[*, 0l]
+          hf_spec_mean_filt = hf_spec_mean
 
-        if icnt gt 0l then hf_spec_mean_filt[idx] = !values.f_nan
+          if icnt gt 0l then hf_spec_mean_filt[idx] = !values.f_nan
 
-        d_filt = d
-        d_filt.y[*, idx] = !values.f_nan
-        d_filt.v = 10.0e3 * findgen(4097l) / (4096.0) ; frequency bins, kHz.
+          d_filt = d
+          d_filt.y[*, idx] = !values.f_nan
+          d_filt.v = 10.0e3 * findgen(4097l) / (4096.0) ; frequency bins, kHz.
 
-        store_data, 'ts1_efi_hf_spec_filt_kHz', data = d_filt
-        options, 'ts1_efi_hf_spec_filt_kHz', 'spec', 1
-        options, 'ts1_efi_hf_spec_filt_kHz', 'zrange', [1.0e-8, 1.0e-6]
-        options, 'ts1_efi_hf_spec_filt_kHz', 'zlog', 1
-        options, 'ts1_efi_hf_spec_filt_kHz', 'yrange', [10., 2000.]
-        options, 'ts1_efi_hf_spec_filt_kHz', 'x_no_interp', 1
-        options, 'ts1_efi_hf_spec_filt_kHz', 'y_no_interp', 1
+          store_data, 'ts1_efi_hf_spec_filt_kHz', data = d_filt
+          options, 'ts1_efi_hf_spec_filt_kHz', 'spec', 1
+          options, 'ts1_efi_hf_spec_filt_kHz', 'zrange', [1.0e-8, 1.0e-6]
+          options, 'ts1_efi_hf_spec_filt_kHz', 'zlog', 1
+          options, 'ts1_efi_hf_spec_filt_kHz', 'yrange', [10., 2000.]
+          options, 'ts1_efi_hf_spec_filt_kHz', 'x_no_interp', 1
+          options, 'ts1_efi_hf_spec_filt_kHz', 'y_no_interp', 1
+        endif
       endif ; ts1 EHF
     endif ; level eq 'l2'
 

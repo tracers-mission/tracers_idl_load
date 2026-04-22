@@ -62,8 +62,13 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
   data_filenames = data_filenames
   compile_opt idl2
 
-  if undefined(local_path) then local_path = '/Volumes/wvushaverhd/TRACERS_data' ; where to save your downloaded data
-  if undefined(remote_path) then remote_path = 'https://tracers-portal.physics.uiowa.edu/teams'
+  defsysv, '!tracers', exists = tracers_exists
+  if ~tracers_exists then begin
+    print, 'ERROR: TRACERS environment not initialized. Please run tracers_init to initialize the IDL environment for TRACERS work.'
+    return
+  endif
+  if undefined(local_path) then local_path = !tracers.local_data_dir
+  if undefined(remote_path) then remote_path = !tracers.remote_data_dir
   if keyword_set(downloadonly) then tplot = 0 else tplot = 1 ; if you want to only download the data, not tplot
   if undefined(version) then version = '**' ; default to latest
   if undefined(revision) then revision = '**' ; default to latest

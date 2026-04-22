@@ -165,8 +165,19 @@ function tracers_roi_load, spacecraft = spacecraft, trange = trange, $
 
   if undefined(spacecraft) then spacecraft = ['all'] else spacecraft = strlowcase(spacecraft)
   if ~isa(spacecraft, /array) then spacecraft = [spacecraft] ; normalize scalar to array
-  if undefined(local_path) then local_path = '/Volumes/wvushaverhd/TRACERS_data'
-  if undefined(remote_path) then remote_path = 'https://tracers-portal.physics.uiowa.edu'
+  defsysv, '!tracers', exists = tracers_exists
+  if ~tracers_exists then begin
+    print, 'ERROR: TRACERS environment not initialized. Please run tracers_init to initialize the IDL environment for TRACERS work.'
+    return, !null
+  endif
+  if undefined(local_path) then local_path = !tracers.local_data_dir
+  if undefined(remote_path) then begin
+    ; ROI files are on the public portal - strip /teams suffix if credentials are set
+    base = !tracers.remote_data_dir
+    teams_pos = strpos(base, '/teams')
+    if teams_pos gt 0 then base = strmid(base, 0, teams_pos)
+    remote_path = base
+  endif
   if undefined(verbose) then verbose = 0
 
   if undefined(trange) then trange = timerange() else trange = time_double(trange)

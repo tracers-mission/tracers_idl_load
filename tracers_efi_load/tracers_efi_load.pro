@@ -71,8 +71,13 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
 
   ; timespan, '2025-09-26', 2
 
-  if undefined(local_path) then local_path = '/Volumes/wvushaverhd/TRACERS_data' ; where to save your downloaded data
-  if undefined(remote_path) then remote_path = 'https://tracers-portal.physics.uiowa.edu/teams'
+  defsysv, '!tracers', exists = tracers_exists
+  if ~tracers_exists then begin
+    print, 'ERROR: TRACERS environment not initialized. Please run tracers_init to initialize the IDL environment for TRACERS work.'
+    return
+  endif
+  if undefined(local_path) then local_path = !tracers.local_data_dir
+  if undefined(remote_path) then remote_path = !tracers.remote_data_dir
   if undefined(spacecraft) then spacecraft = ['ts2'] else spacecraft = [strlowcase(spacecraft)] ; default to ts2
   if undefined(level) then level = 'l2' else level = strlowcase(level)
   if undefined(instrument) then instrument = 'EFI' else instrument = strupcase(instrument)

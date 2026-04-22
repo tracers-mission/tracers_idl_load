@@ -86,19 +86,17 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
   if undefined(datatype) then datatype = 'all'
   if keyword_set(downloadonly) then tplot = 0 else tplot = 1 ; if you want to only download the data, not tplot
 
+  has_credentials = 0
   if undefined(url_username) or undefined(url_password) then begin
     check = getenv('TRACERS_USER_PASS')
-    if check eq '' then begin
-      print, 'Please input TRACERS url username and password as keywords'
-      print, 'Returning...'
-      print, ''
-      return
-    end else begin
+    if check ne '' then begin
       uspw = strsplit(check, ':', /extract)
       url_username = uspw[0]
       url_password = uspw[1]
-    end
-  end
+      has_credentials = 1
+    endif
+  endif else has_credentials = 1
+  public_base = 'https://tracers-portal.physics.uiowa.edu'
 
   nfiles = n_elements(files) ; getting the dates
 
@@ -164,30 +162,46 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
     ; Level 2 data files
     ; ----------------------------
     if level eq 'l2' then begin ; level 2 data
-      instrument_path = '/flight/' + instrument + '/' + level + '/' + spacecraft + '/' + yyyy + '/' + mm + '/' + dd + '/'
-      fn_arr = []
+      ; build filenames with lowercase instrument token (correct for both teams and public portal)
+      instr_lower = strlowcase(instrument)
+      fn_basenames = []
+      if doedc    then fn_basenames = [fn_basenames, spacecraft + '_l2_' + instr_lower + '_edc_'     + mm + dd + yyyy + '_v' + version + '.cdf'] ; edc uses MMDDYYYY
+      if doedcroi then fn_basenames = [fn_basenames, spacecraft + '_l2_' + instr_lower + '_edc-roi_' + files[i]      + '_v' + version + '.cdf']
+      if doehf    then fn_basenames = [fn_basenames, spacecraft + '_l2_' + instr_lower + '_ehf_'     + files[i]      + '_v' + version + '.cdf']
+      if dovdc    then fn_basenames = [fn_basenames, spacecraft + '_l2_' + instr_lower + '_vdc_'     + files[i]      + '_v' + version + '.cdf']
+      if dohsk    then fn_basenames = [fn_basenames, spacecraft + '_l2_' + instr_lower + '_hsk_'     + files[i]      + '_v' + version + '.cdf']
+      if doeac    then fn_basenames = [fn_basenames, spacecraft + '_l2_' + instr_lower + '_eac_'     + files[i]      + '_v' + version + '.cdf']
 
-      if doedc then edc_fn = instrument_path + spacecraft + '_' + level + '_' + instrument + '_edc_' + mm + dd + yyyy + '_v' + version + '.cdf' ; edc
-      if doedc then fn_arr = [fn_arr, edc_fn]
-      if doedcroi then edcroi_fn = instrument_path + spacecraft + '_' + level + '_' + instrument + '_edc-roi_' + files[i] + '_v' + version + '.cdf' ; edc-roi
-      if doedcroi then fn_arr = [fn_arr, edcroi_fn]
-      if doehf then ehf_fn = instrument_path + spacecraft + '_' + level + '_' + instrument + '_ehf_' + files[i] + '_v' + version + '.cdf' ; ehf
-      if doehf then fn_arr = [fn_arr, ehf_fn]
-      if dovdc then vdc_fn = instrument_path + spacecraft + '_' + level + '_' + instrument + '_vdc_' + files[i] + '_v' + version + '.cdf' ; vdc
-      if dovdc then fn_arr = [fn_arr, vdc_fn]
-      if dohsk then hsk_fn = instrument_path + spacecraft + '_' + level + '_' + instrument + '_hsk_' + files[i] + '_v' + version + '.cdf' ; hsk
-      if dohsk then fn_arr = [fn_arr, hsk_fn]
-      if doeac then eac_fn = instrument_path + spacecraft + '_' + level + '_' + instrument + '_eac_' + files[i] + '_v' + version + '.cdf' ; eac
-      if doeac then fn_arr = [fn_arr, eac_fn]
-
-      dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_arr, local_path = local_path, $
-        url_username = url_username, url_password = url_password)
+      if has_credentials then begin
+        ; teams portal: uppercase instrument in folder path, lowercase in filename
+        teams_path = '/flight/' + instrument + '/' + level + '/' + spacecraft + '/' + yyyy + '/' + mm + '/' + dd + '/'
+        fn_arr = teams_path + fn_basenames
+        dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_arr, local_path = local_path, $
+          url_username = url_username, url_password = url_password)
+      endif else begin
+        ; public portal: /L2/{SC}/{YYYY}/{MM}/{DD}/
+        pub_path = '/L2/' + strupcase(spacecraft) + '/' + yyyy + '/' + mm + '/' + dd + '/'
+        pub_fn_arr = pub_path + fn_basenames
+        dnld_paths = spd_download(remote_path = public_base, remote_file = pub_fn_arr, local_path = local_path)
+        for j = 0, n_elements(pub_fn_arr) - 1 do begin
+          if dnld_paths[j] eq '' then begin
+            print, 'WARNING: Public L2 EFI file not available: ' + file_basename(pub_fn_arr[j])
+            print, '  Public data may not yet be released for this date.'
+            print, '  To access teams data, set credentials via tracers_init (url_username and url_password keywords).'
+          endif
+        endfor
+      endelse
     end ; loading level 2 data
 
     ; ----------------------------
     ; Level 1B data files
     ; ----------------------------
     if level eq 'l1b' then begin ; loading level 1b data
+      print, ''
+      print, 'WARNING: L1B data is not intended for science use or publications.'
+      print, 'Please use L2 data for science analysis. Continuing in 3 seconds...'
+      print, ''
+      wait, 3
       instrument_path = '/flight/SOC/' + strupcase(spacecraft) + '/' + strupcase(level) + '/' + instrument + '/' + yyyy + '/' + mm + '/' + dd + '/'
 
       fn_arr = []
@@ -220,6 +234,11 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
     ; Level 1A data files
     ; ---------------------------
     if level eq 'l1a' then begin ; fetch level 1a data
+      print, ''
+      print, 'WARNING: L1A data is not intended for science use or publications.'
+      print, 'Please use L2 data for science analysis. Continuing in 3 seconds...'
+      print, ''
+      wait, 3
 
       instrument_path = '/flight/SOC/' + strupcase(spacecraft) + '/' + strupcase(level) + '/' + instrument + '/' + yyyy + '/' + mm + '/' + dd + '/'
       fn_arr = []

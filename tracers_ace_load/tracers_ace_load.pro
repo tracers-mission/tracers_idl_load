@@ -52,19 +52,17 @@ pro tracers_ace_load, remote_path = remote_path, local_path = local_path, $
   if undefined(revision) then revision = '**' ; default to latest
   if keyword_set(downloadonly) then tplot = 0 else tplot = 1 ; if you want to only download the data, not tplot
 
+  has_credentials = 0
   if undefined(url_username) or undefined(url_password) then begin
     check = getenv('TRACERS_USER_PASS')
-    if check eq '' then begin
-      print, 'Please input TRACERS url username and password as keywords'
-      print, 'Returning...'
-      print, ''
-      return
-    end else begin
+    if check ne '' then begin
       uspw = strsplit(check, ':', /extract)
       url_username = uspw[0]
       url_password = uspw[1]
-    end
-  end
+      has_credentials = 1
+    endif
+  endif else has_credentials = 1
+  public_base = 'https://tracers-portal.physics.uiowa.edu'
 
   if undefined(trange) then trange = timerange() else trange = time_double(trange)
 
@@ -87,11 +85,23 @@ pro tracers_ace_load, remote_path = remote_path, local_path = local_path, $
     dd = strmid(dates[i], 6, 2)
 
     if (total(level.contains('l2')) ge 1) then begin ; level 2
-      ace_path = '/flight/ACE/' + strlowcase(spacecraft) + '/l2/' + yyyy + '/' + mm + '/'
-      fn_i = ace_path + strlowcase(spacecraft) + '_l2_ace_def_' + dates[i] + '_v' + version + '.cdf'
+      fn_basename = strlowcase(spacecraft) + '_l2_ace_def_' + dates[i] + '_v' + version + '.cdf'
 
-      dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
-        url_username = url_username, url_password = url_password)
+      if has_credentials then begin
+        ace_path = '/flight/ACE/' + strlowcase(spacecraft) + '/l2/' + yyyy + '/' + mm + '/'
+        fn_i = ace_path + fn_basename
+        dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
+          url_username = url_username, url_password = url_password)
+      endif else begin
+        pub_path = '/L2/' + strupcase(spacecraft) + '/' + yyyy + '/' + mm + '/' + dd + '/'
+        pub_fn = pub_path + fn_basename
+        dnld_paths = spd_download(remote_path = public_base, remote_file = pub_fn, local_path = local_path)
+        if dnld_paths[0] eq '' then begin
+          print, 'WARNING: Public L2 ACE file not available: ' + fn_basename
+          print, '  Public data may not yet be released for this date.'
+          print, '  To access teams data, set credentials via tracers_init (url_username and url_password keywords).'
+        endif
+      endelse
 
       ; if user specifies, then return filenames of where the data has been saved to back to the user
       data_filenames = [data_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]

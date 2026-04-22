@@ -56,92 +56,96 @@ pro tracers_aci_tplot, filenames, spacecraft = spacecraft, level = level
     ; ------------------------------------
     tmp_vname = spacecraft + '_l2_aci_tscs_def'
     get_data, tmp_vname, data = dat, limit = lim, dlimit = dlim ; differential energy flux
-    ntimes = n_elements(dat.x)
-    nen = n_elements(dat.v1)
-    nang = n_elements(dat.v2) ; look angles
-    energy_steps = dat.v1
-    angle_Steps = dat.v2
+    if isa(dat, 'struct') then begin
+      ntimes = n_elements(dat.x)
+      nen = n_elements(dat.v1)
+      nang = n_elements(dat.v2) ; look angles
+      energy_steps = dat.v1
+      angle_Steps = dat.v2
 
-    ; --- unused / in-progress: per-cell moment loop (ave_flux never stored) ---
-    ; ave_flux = fltarr(ntimes, nen) ; y: flux values averaged over all angles
-    ; eflux = fltarr(ntimes, nen)
-    ; energies = fltarr(ntimes, nen) ; v: all energies
-    ; angles = fltarr(ntimes, nang) ; all angles
-    ;
-    ; for i = 0, ntimes - 1 do begin ; all times
-    ; for j = 0, nen - 1 do begin ; all energies
-    ; m = moment(dat.y[i, j, *]) ; average over all angles
-    ; ave_flux[i, j] = m[0]
-    ; energies[i, j] = energy_steps[j]
-    ; end ; over energies
-    ; for k = 0, nang - 1 do begin ; all look angles
-    ; angles[i, k] = angle_Steps[k]
-    ; end
-    ; end ; over times
-    ; store_data, 'ts2_l2_aci_an_eflux', data = {x: dat.x, y: ave_flux, v: energies}, limit = {ylog: 1, zlog: 1, ytitle: 'Energy [eV]', ztitle: 'Diff. En. Flux', spec: 1, ystyle: 1, no_interp: 1}
-    ; --- end unused block ---
+      ; --- unused / in-progress: per-cell moment loop (ave_flux never stored) ---
+      ; ave_flux = fltarr(ntimes, nen) ; y: flux values averaged over all angles
+      ; eflux = fltarr(ntimes, nen)
+      ; energies = fltarr(ntimes, nen) ; v: all energies
+      ; angles = fltarr(ntimes, nang) ; all angles
+      ;
+      ; for i = 0, ntimes - 1 do begin ; all times
+      ; for j = 0, nen - 1 do begin ; all energies
+      ; m = moment(dat.y[i, j, *]) ; average over all angles
+      ; ave_flux[i, j] = m[0]
+      ; energies[i, j] = energy_steps[j]
+      ; end ; over energies
+      ; for k = 0, nang - 1 do begin ; all look angles
+      ; angles[i, k] = angle_Steps[k]
+      ; end
+      ; end ; over times
+      ; store_data, 'ts2_l2_aci_an_eflux', data = {x: dat.x, y: ave_flux, v: energies}, limit = {ylog: 1, zlog: 1, ytitle: 'Energy [eV]', ztitle: 'Diff. En. Flux', spec: 1, ystyle: 1, no_interp: 1}
+      ; --- end unused block ---
 
-    ; angle-averaged energy spectrogram: mean over 16 anode angles
-    espec_avg = total(dat.y, 3) / nang
-    store_data, spacecraft + '_l2_aci_en_eflux_avg', data = {x: dat.x, y: espec_avg, v: energy_steps}, $
-      limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Avg Diff. En. Flux', $
-        spec: 1, yrange: [8., 2.e4], ystyle: 1}
+      ; angle-averaged energy spectrogram: mean over 16 anode angles
+      espec_avg = total(dat.y, 3) / nang
+      store_data, spacecraft + '_l2_aci_en_eflux_avg', data = {x: dat.x, y: espec_avg, v: energy_steps}, $
+        limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Avg Diff. En. Flux', $
+          spec: 1, yrange: [8., 2.e4], ystyle: 1}
 
-    ; angle-integrated energy spectrogram: sum over 16 anode angles
-    espec_int = total(dat.y, 3)
-    store_data, spacecraft + '_l2_aci_en_eflux_int', data = {x: dat.x, y: espec_int, v: energy_steps}, $
-      limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Int. Diff. En. Flux', $
-        spec: 1, yrange: [8., 2.e4], ystyle: 1}
+      ; angle-integrated energy spectrogram: sum over 16 anode angles
+      espec_int = total(dat.y, 3)
+      store_data, spacecraft + '_l2_aci_en_eflux_int', data = {x: dat.x, y: espec_int, v: energy_steps}, $
+        limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Int. Diff. En. Flux', $
+          spec: 1, yrange: [8., 2.e4], ystyle: 1}
 
-    ; energy-averaged angle spectrogram: mean over 47 energy channels
-    aspec = total(dat.y, 2) / nen
-    store_data, spacecraft + '_l2_aci_an_eflux_avg', data = {x: dat.x, y: aspec, v: angle_Steps}, $
-      limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Avg Diff. En. Flux', spec: 1, ystyle: 1}
+      ; energy-averaged angle spectrogram: mean over 47 energy channels
+      aspec = total(dat.y, 2) / nen
+      store_data, spacecraft + '_l2_aci_an_eflux_avg', data = {x: dat.x, y: aspec, v: angle_Steps}, $
+        limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Avg Diff. En. Flux', spec: 1, ystyle: 1}
+    endif else dprint, 'WARNING: ' + tmp_vname + ' not found in CDF — skipping diff. energy flux variables.'
 
     ; COUNTS!
     ; ------------------------------------
     tmp_vname = spacecraft + '_l2_aci_tscs_def_sorted_counts'
     get_data, tmp_vname, data = dat, limit = lim, dlimit = dlim ; counts
-    ntimes = n_elements(dat.x)
-    nen = n_elements(dat.v1)
-    nang = n_elements(dat.v2) ; look angles
-    energy_steps = dat.v1
-    angle_Steps = dat.v2
+    if isa(dat, 'struct') then begin
+      ntimes = n_elements(dat.x)
+      nen = n_elements(dat.v1)
+      nang = n_elements(dat.v2) ; look angles
+      energy_steps = dat.v1
+      angle_Steps = dat.v2
 
-    ; --- unused / in-progress: per-cell moment loop (ave_flux never stored) ---
-    ; ave_flux = fltarr(ntimes, nen) ; y: flux values averaged over all angles
-    ; eflux = fltarr(ntimes, nen)
-    ; energies = fltarr(ntimes, nen) ; v: all energies
-    ; angles = fltarr(ntimes, nang) ; all angles
-    ;
-    ; for i = 0, ntimes - 1 do begin ; all times
-    ; for j = 0, nen - 1 do begin ; all energies
-    ; ; m = moment(dat.y[i, *, j]) ; average over all angles
-    ; ; ave_flux[i, j] = m[0]
-    ; energies[i, j] = energy_steps[j]
-    ; end ; over energies
-    ; for k = 0, nang - 1 do begin ; all look angles
-    ; angles[i, k] = angle_Steps[k]
-    ; end ; angles
-    ; end ; over times
-    ; --- end unused block ---
+      ; --- unused / in-progress: per-cell moment loop (ave_flux never stored) ---
+      ; ave_flux = fltarr(ntimes, nen) ; y: flux values averaged over all angles
+      ; eflux = fltarr(ntimes, nen)
+      ; energies = fltarr(ntimes, nen) ; v: all energies
+      ; angles = fltarr(ntimes, nang) ; all angles
+      ;
+      ; for i = 0, ntimes - 1 do begin ; all times
+      ; for j = 0, nen - 1 do begin ; all energies
+      ; ; m = moment(dat.y[i, *, j]) ; average over all angles
+      ; ; ave_flux[i, j] = m[0]
+      ; energies[i, j] = energy_steps[j]
+      ; end ; over energies
+      ; for k = 0, nang - 1 do begin ; all look angles
+      ; angles[i, k] = angle_Steps[k]
+      ; end ; angles
+      ; end ; over times
+      ; --- end unused block ---
 
-    ; angle-averaged counts energy spectrogram: mean over 16 anode angles
-    especc_avg = total(dat.y, 3) / nang
-    store_data, spacecraft + '_l2_aci_en_counts_avg', data = {x: dat.x, y: especc_avg, v: energy_steps}, $
-      limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Avg Counts', $
-        spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
+      ; angle-averaged counts energy spectrogram: mean over 16 anode angles
+      especc_avg = total(dat.y, 3) / nang
+      store_data, spacecraft + '_l2_aci_en_counts_avg', data = {x: dat.x, y: especc_avg, v: energy_steps}, $
+        limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Avg Counts', $
+          spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
 
-    ; angle-integrated counts energy spectrogram: sum over 16 anode angles
-    especc_int = total(dat.y, 3)
-    store_data, spacecraft + '_l2_aci_en_counts_int', data = {x: dat.x, y: especc_int, v: energy_steps}, $
-      limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Int. Counts', $
-        spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
+      ; angle-integrated counts energy spectrogram: sum over 16 anode angles
+      especc_int = total(dat.y, 3)
+      store_data, spacecraft + '_l2_aci_en_counts_int', data = {x: dat.x, y: especc_int, v: energy_steps}, $
+        limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Int. Counts', $
+          spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
 
-    ; energy-averaged angle spectrogram: mean over 47 energy channels
-    aspecc = total(dat.y, 2) / nen
-    store_data, spacecraft + '_l2_aci_an_counts_avg', data = {x: dat.x, y: aspecc, v: angle_Steps}, $
-      limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Avg Counts', spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
+      ; energy-averaged angle spectrogram: mean over 47 energy channels
+      aspecc = total(dat.y, 2) / nen
+      store_data, spacecraft + '_l2_aci_an_counts_avg', data = {x: dat.x, y: aspecc, v: angle_Steps}, $
+        limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Avg Counts', spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
+    endif else dprint, 'WARNING: ' + tmp_vname + ' not found in CDF — skipping counts variables.'
 
     ; end ; for files
   endif ; over filenames found check

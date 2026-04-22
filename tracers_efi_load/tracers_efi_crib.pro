@@ -8,7 +8,7 @@ compile_opt idl2
 device, true = 24, decompose = 0, retain = 2
 loadcv, 39  ; load rainbow+white color table
 
-; initialize for TRACERS (team only)
+; initialize for TRACERS 
 tracers_init
 
 ; download the data

@@ -143,6 +143,7 @@ desktop.ini
 CLAUDE.local.md
 CLAUDE.md
 .claude/settings.local.json
+HANDOFF.md
 
 # Claude Code - context exclusions (optional, keeps repo clean)
 .claudeignore

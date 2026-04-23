@@ -47,10 +47,48 @@ pro tracers_aci_tplot, filenames, spacecraft = spacecraft, level = level
 
     tvars = []
 
+    ; save pre-existing raw CDF variables before cdf2tplot overwrites them
+    raw_vnames = [spacecraft + '_l2_aci_tscs_def', $
+                  spacecraft + '_l2_aci_tscs_def_errors', $
+                  spacecraft + '_l2_aci_tscs_def_sorted_counts', $
+                  spacecraft + '_l2_aci_tscs_pitch_angle', $
+                  spacecraft + '_l2_aci_gei2000_look_direction_theta', $
+                  spacecraft + '_l2_aci_gei2000_look_direction_phi', $
+                  spacecraft + '_l2_aci_quat_tscs_to_gei2000']
+    nraw = n_elements(raw_vnames)
+    raw_old = ptrarr(nraw)
+    for iv = 0, nraw - 1 do begin
+      get_data, raw_vnames[iv], data = tmp_old
+      if isa(tmp_old, 'struct') then raw_old[iv] = ptr_new(tmp_old)
+    endfor
+
     ; for ifil = 0, nfilesexists - 1 do begin
     ; cdf2tplot, files = filenames[ifil], varformat = '*'
     cdf2tplot, files = acil2file, varformat = '*'
     tvars = [tvars, tnames()]
+
+    ; append new data onto any pre-existing raw CDF variables and time-sort
+    for iv = 0, nraw - 1 do begin
+      if ~ptr_valid(raw_old[iv]) then continue
+      get_data, raw_vnames[iv], data = new_dat
+      if ~isa(new_dat, 'struct') then continue
+      old_dat = *raw_old[iv]
+      combined_x = [old_dat.x, new_dat.x]
+      sort_idx = sort(combined_x)
+      combined_y = [old_dat.y, new_dat.y]
+      ndims = size(combined_y, /n_dimensions)
+      case ndims of
+        3: combined_y = combined_y[sort_idx, *, *]
+        2: combined_y = combined_y[sort_idx, *]
+        else: combined_y = combined_y[sort_idx]
+      endcase
+      new_struct = {x: combined_x[sort_idx], y: combined_y}
+      if tag_exist(new_dat, 'v2') then new_struct = create_struct(new_struct, 'v1', new_dat.v1, 'v2', new_dat.v2) $
+      else if tag_exist(new_dat, 'v1') then new_struct = create_struct(new_struct, 'v1', new_dat.v1) $
+      else if tag_exist(new_dat, 'v') then new_struct = create_struct(new_struct, 'v', new_dat.v)
+      store_data, raw_vnames[iv], data = new_struct
+    endfor
+    ptr_free, raw_old
 
     ; differential energy flux!
     ; ------------------------------------
@@ -146,6 +184,17 @@ pro tracers_aci_tplot, filenames, spacecraft = spacecraft, level = level
       store_data, spacecraft + '_l2_aci_an_counts_avg', data = {x: dat.x, y: aspecc, v: angle_Steps}, $
         limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Avg Counts', spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
     endif else dprint, 'WARNING: ' + tmp_vname + ' not found in CDF — skipping counts variables.'
+
+    ; PITCH ANGLE
+    ; ------------------------------------
+    ; TODO: add pitch angle derived products (e.g., pitch angle distributions, flux vs pitch angle)
+    tmp_vname = spacecraft + '_l2_aci_tscs_pitch_angle'
+    get_data, tmp_vname, data = dat, limit = lim, dlimit = dlim
+    if isa(dat, 'struct') then begin
+      ; placeholder: store raw pitch angle variable for plotting
+      store_data, spacecraft + '_l2_aci_pitch_angle', data = dat, $
+        limit = {ytitle: strupcase(spacecraft) + '!CPitch Angle [deg]'}
+    endif else dprint, 'WARNING: ' + tmp_vname + ' not found in CDF — skipping pitch angle variables.'
 
     ; end ; for files
   endif ; over filenames found check

@@ -284,22 +284,22 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
       options, 'ts?_l1b_edc*_roi', labflag = 1, labels = ['EX', 'EY', 'EZ'], colors = ['r', 'g', 'b']
       options, 'ts?_l1b_ehf', spec = 1, ylog = 1, zlog = 1
 
-      if (total(spacecraft.contains('ts1')) ge 1) then begin
+      if (total(spacecraft.contains('ts1')) ge 1) and doeac then begin
         ; eac
-        ; get_data, 'ts1_l1b_eac', data = dat
-        ; ch1 = reform(dat.y[*, 0, *]) ; channel 1
-        ; ch2 = reform(dat.y[*, 1, *]) ; channel 2
-        ; store_Data, 'ts1_l1b_eac_ch1', data = {x: dat.x, y: ch1, v: dat.v}
-        ; store_Data, 'ts1_l1b_eac_ch2', data = {x: dat.x, y: ch2, v: dat.v}
+        get_data, 'ts1_l1b_eac', data = dat, limit = lim, dlimit = dlim
+        ch1 = reform(dat.y[*, 0, *]) ; channel 1
+        ch2 = reform(dat.y[*, 1, *]) ; channel 2
+        store_Data, 'ts1_l1b_eac_ch1', data = {x: dat.x, y: ch1, v: dat.v}, limit = {spec: 1}, dlimit = dlim
+        store_Data, 'ts1_l1b_eac_ch2', data = {x: dat.x, y: ch2, v: dat.v}, limit = {spec: 1}, dlimit = dlim
       endif ; ts1
 
-      if (total(spacecraft.contains('ts2')) ge 1) then begin
+      if (total(spacecraft.contains('ts2')) ge 1) and doeac then begin
         ; eac
-        ; get_data, 'ts2_l1b_eac', data = dat
-        ; ch1 = reform(dat.y[*, 0, *]) ; channel 1
-        ; ch2 = reform(dat.y[*, 1, *]) ; channel 2
-        ; store_Data, 'ts2_l1b_eac_ch1', data = {x: dat.x, y: ch1, v: dat.v}
-        ; store_Data, 'ts2_l1b_eac_ch2', data = {x: dat.x, y: ch2, v: dat.v}
+        get_data, 'ts2_l1b_eac', data = dat, limit = lim, dlimit = dlim
+        ch1 = reform(dat.y[*, 0, *]) ; channel 1
+        ch2 = reform(dat.y[*, 1, *]) ; channel 2
+        store_Data, 'ts2_l1b_eac_ch1', data = {x: dat.x, y: ch1, v: dat.v}, limit = {spec: 1, zlog: 1}, dlimit = dlim
+        store_Data, 'ts2_l1b_eac_ch2', data = {x: dat.x, y: ch2, v: dat.v}, limit = {spec: 1}, dlimit = dlim
       endif ; ts2
 
       options, 'ts?_l1b_eac_ch*', spec = 1

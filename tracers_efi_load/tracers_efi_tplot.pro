@@ -123,11 +123,13 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
     if level eq 'l2' then begin
       ; EDC options
       ; ---------------------------------------------
-      options, 'ts?_l2_edc*_gei', labflag = 1, labels = ['EX!DGEI!N', 'EY!DGEI!N', 'EZ!DGEI!N'], colors = ['r', 'g', 'b']
-      options, 'ts?_l2_edc*_fac', labflag = 1, labels = ['EX!DFAC!N', 'EY!DFAC!N', 'EZ!DFAC!N'], colors = ['r', 'g', 'b']
-      options, 'ts?_l2_edc*_fvc', labflag = 1, labels = ['EX!DFVC!N', 'EY!DFVC!N', 'EZ!DFVC!N'], colors = ['r', 'g', 'b']
-      options, 'ts?_l2_edc*_gsm', labflag = 1, labels = ['EX!DGSM!N', 'EY!DGSM!N', 'EZ!DGSM!N'], colors = ['r', 'g', 'b']
-      options, 'ts?_l2_edc*_TSCS', labflag = 1, labels = ['EX!DTSCS!N', 'EY!DTSCS!N', 'EZ!DTSCS!N'], colors = ['r', 'g', 'b']
+      if doedc then begin
+        if tnames('ts?_l2_edc*_gei') ne '' then options, 'ts?_l2_edc*_gei', labflag = 1, labels = ['EX!DGEI!N', 'EY!DGEI!N', 'EZ!DGEI!N'], colors = ['r', 'g', 'b']
+        if tnames('ts?_l2_edc*_fac') ne '' then options, 'ts?_l2_edc*_fac', labflag = 1, labels = ['EX!DFAC!N', 'EY!DFAC!N', 'EZ!DFAC!N'], colors = ['r', 'g', 'b']
+        if tnames('ts?_l2_edc*_fvc') ne '' then options, 'ts?_l2_edc*_fvc', labflag = 1, labels = ['EX!DFVC!N', 'EY!DFVC!N', 'EZ!DFVC!N'], colors = ['r', 'g', 'b']
+        if tnames('ts?_l2_edc*_gsm') ne '' then options, 'ts?_l2_edc*_gsm', labflag = 1, labels = ['EX!DGSM!N', 'EY!DGSM!N', 'EZ!DGSM!N'], colors = ['r', 'g', 'b']
+        if tnames('ts?_l2_edc*_TSCS') ne '' then options, 'ts?_l2_edc*_TSCS', labflag = 1, labels = ['EX!DTSCS!N', 'EY!DTSCS!N', 'EZ!DTSCS!N'], colors = ['r', 'g', 'b']
+      end ; EDC
 
       ; VDC options
       ; ---------------------------------------------
@@ -156,8 +158,16 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
           store_data, 'ts1_l2_vdc_xyavg', data = {x: dxm.x, y: 0.25 * (dxm.y + dxp.y + dym.y + dyp.y)}
         endif
       endif ; over spacecraft 1
-      ; set VDC variable colors
-      options, 'ts?_l2_vdc_*', colors = ['r']
+      if dovdc then begin ; general options for all VDC variables
+        ; set VDC variable colors
+        options, 'ts?_l2_vdc_*', colors = ['r']
+      end
+
+      ; EAC options and derived variables.
+      ; ---------------------------------------------
+      if doeac then begin
+        stop
+      end
 
       ; HSK options and derived variables.
       ; ---------------------------------------------
@@ -190,8 +200,10 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
         get_data, 'ts1_l2_efi_bias4_dig', data = d, limits = l, dlimits = dl
         if isa(d, 'struct') then store_data, 'ts1_l2_efi_bias4_uA', data = {x: d.x, y: (ibias_0 + dibias_ddac * d.y)}
       endif ; ts1 HSK
-      ; set HSK bias variable colors
-      options, 'ts?_l2_efi_bias?_*', colors = ['r']
+      if dohsk then begin
+        ; set HSK bias variable colors
+        options, 'ts?_l2_efi_bias?_*', colors = ['r']
+      end
 
       ; EHF options and derived variables.
       ; ---------------------------------------------

@@ -124,11 +124,11 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
       ; EDC options
       ; ---------------------------------------------
       if doedc then begin
-        if tnames('ts?_l2_edc*_gei') ne '' then options, 'ts?_l2_edc*_gei', labflag = 1, labels = ['EX!DGEI!N', 'EY!DGEI!N', 'EZ!DGEI!N'], colors = ['r', 'g', 'b']
-        if tnames('ts?_l2_edc*_fac') ne '' then options, 'ts?_l2_edc*_fac', labflag = 1, labels = ['EX!DFAC!N', 'EY!DFAC!N', 'EZ!DFAC!N'], colors = ['r', 'g', 'b']
-        if tnames('ts?_l2_edc*_fvc') ne '' then options, 'ts?_l2_edc*_fvc', labflag = 1, labels = ['EX!DFVC!N', 'EY!DFVC!N', 'EZ!DFVC!N'], colors = ['r', 'g', 'b']
-        if tnames('ts?_l2_edc*_gsm') ne '' then options, 'ts?_l2_edc*_gsm', labflag = 1, labels = ['EX!DGSM!N', 'EY!DGSM!N', 'EZ!DGSM!N'], colors = ['r', 'g', 'b']
-        if tnames('ts?_l2_edc*_TSCS') ne '' then options, 'ts?_l2_edc*_TSCS', labflag = 1, labels = ['EX!DTSCS!N', 'EY!DTSCS!N', 'EZ!DTSCS!N'], colors = ['r', 'g', 'b']
+        if total(tnames('ts?_l2_edc*_gei') ne '') ge 1 then options, 'ts?_l2_edc*_gei', labflag = 1, labels = ['EX!DGEI!N', 'EY!DGEI!N', 'EZ!DGEI!N'], colors = ['r', 'g', 'b']
+        if total(tnames('ts?_l2_edc*_fac') ne '') ge 1 then options, 'ts?_l2_edc*_fac', labflag = 1, labels = ['EX!DFAC!N', 'EY!DFAC!N', 'EZ!DFAC!N'], colors = ['r', 'g', 'b']
+        if total(tnames('ts?_l2_edc*_fvc') ne '') ge 1 then options, 'ts?_l2_edc*_fvc', labflag = 1, labels = ['EX!DFVC!N', 'EY!DFVC!N', 'EZ!DFVC!N'], colors = ['r', 'g', 'b']
+        if total(tnames('ts?_l2_edc*_gsm') ne '') ge 1 then options, 'ts?_l2_edc*_gsm', labflag = 1, labels = ['EX!DGSM!N', 'EY!DGSM!N', 'EZ!DGSM!N'], colors = ['r', 'g', 'b']
+        if total(tnames('ts?_l2_edc*_TSCS') ne '') ge 1 then options, 'ts?_l2_edc*_TSCS', labflag = 1, labels = ['EX!DTSCS!N', 'EY!DTSCS!N', 'EZ!DTSCS!N'], colors = ['r', 'g', 'b']
       end ; EDC
 
       ; VDC options
@@ -166,8 +166,22 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
       ; EAC options and derived variables.
       ; ---------------------------------------------
       if doeac then begin
-        stop
-      end
+        if total(spacecraft.contains('ts1')) ge 1 then begin
+          get_data, 'ts1_l2_eac', data = d, limits = l, dlimits = dl
+          if isa(d, 'struct') then options, 'ts1_l2_eac', colors = ['r', 'g'], labflag = 1, labels = ['X', 'Y']
+          get_data, 'ts1_l2_eac_x_spec', data = dx, limits = lx, dlimits = dlx
+          get_Data, 'ts1_l2_eac_y_spec', data = dy, limits = ly, dlimits = dly
+        end
+
+        if total(spacecraft.contains('ts2')) ge 1 then begin
+          get_data, 'ts2_l2_eac', data = d, limits = l, dlimits = dl
+          if isa(d, 'struct') then options, 'ts2_l2_eac', colors = ['r', 'g'], labflag = 1, labels = ['X', 'Y']
+          get_data, 'ts2_l2_eac_x_spec', data = dx, limits = lx, dlimits = dlx
+          if isa(dx, 'struct') then options, 'ts2_l2_eac_x_spec', spec = 1, zlog = 1, zrange = [1.0e-12, 1.0e-9]
+          get_Data, 'ts2_l2_eac_y_spec', data = dy, limits = ly, dlimits = dly
+          if isa(dy, 'struct') then options, 'ts2_l2_eac_y_spec', spec = 1, zlog = 1, zrange = [1.0e-12, 1.0e-9]
+        end
+      end ; EAC
 
       ; HSK options and derived variables.
       ; ---------------------------------------------

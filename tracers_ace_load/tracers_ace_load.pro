@@ -16,8 +16,9 @@
 ;     Directory path for EFI files (default 'https://tracers-portal.physics.uiowa.edu/teams')
 ;   revision: bidirectional, optional, any
 ;     Placeholder docs for argument, keyword, or property
-;   spacecraft: in, optional, Array<String>
-;     ['ts1','ts2'] spacecraft handle to put in file (defaults to 'ts2')
+;   spacecraft: in, optional, str | Array<String>
+;     ['ts1','ts2','both']
+;     spacecraft to load (defaults to 'ts2'); 'both' or ['ts1','ts2'] loads both spacecraft
 ;   trange: in, optional, str or double arr
 ;     load data for all files within a given range (one day granularity,
 ;     supercedes file list, if not set then 'timerange' will be called)
@@ -45,7 +46,11 @@ pro tracers_ace_load, remote_path = remote_path, local_path = local_path, $
   endif
   if undefined(local_path) then local_path = !tracers.local_data_dir
   if undefined(remote_path) then remote_path = !tracers.remote_data_dir
-  if undefined(spacecraft) then spacecraft = ['ts2'] else spacecraft = [strlowcase(spacecraft)] ; default to ts2
+  if undefined(spacecraft) then spacecraft = ['ts2'] else begin
+    spacecraft = strlowcase(spacecraft)
+    if n_elements(spacecraft) eq 1 and spacecraft[0] eq 'both' then spacecraft = ['ts1', 'ts2'] $
+    else spacecraft = [spacecraft]
+  endelse
   if undefined(level) then level = ['l2'] else level = strlowcase(level)
   if ~isa(level, /array, /string) then level = [level] ; make sure its an array
   if undefined(version) then version = '**' ; default to latest
@@ -74,55 +79,62 @@ pro tracers_ace_load, remote_path = remote_path, local_path = local_path, $
 
   data_filenames = []
 
-  for i = 0, ndates - 1 do begin
-    print, '...'
-    ; print, 'Reading File for Date: ', dates[i]
-    print, 'Fetching File for Date: ', dates[i]
-    print, '...'
+  for isc = 0, n_elements(spacecraft) - 1 do begin ; spacecraft loop
+    sc = spacecraft[isc]
+    sc_filenames = []
 
-    yyyy = strmid(dates[i], 0, 4)
-    mm = strmid(dates[i], 4, 2)
-    dd = strmid(dates[i], 6, 2)
+    for i = 0, ndates - 1 do begin
+      print, '...'
+      ; print, 'Reading File for Date: ', dates[i]
+      print, 'Fetching File for Date: ', dates[i]
+      print, '...'
 
-    if (total(level.contains('l2')) ge 1) then begin ; level 2
-      fn_basename = strlowcase(spacecraft) + '_l2_ace_def_' + dates[i] + '_v' + version + '.cdf'
+      yyyy = strmid(dates[i], 0, 4)
+      mm = strmid(dates[i], 4, 2)
+      dd = strmid(dates[i], 6, 2)
 
-      if has_credentials then begin
-        ace_path = '/flight/ACE/' + strlowcase(spacecraft) + '/l2/' + yyyy + '/' + mm + '/'
-        fn_i = ace_path + fn_basename
+      if (total(level.contains('l2')) ge 1) then begin ; level 2
+        fn_basename = sc + '_l2_ace_def_' + dates[i] + '_v' + version + '.cdf'
+
+        if has_credentials then begin
+          ace_path = '/flight/ACE/' + sc + '/l2/' + yyyy + '/' + mm + '/'
+          fn_i = ace_path + fn_basename
+          dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
+            url_username = url_username, url_password = url_password)
+        endif else begin
+          pub_path = '/L2/' + strupcase(sc) + '/' + yyyy + '/' + mm + '/' + dd + '/'
+          pub_fn = pub_path + fn_basename
+          dnld_paths = spd_download(remote_path = public_base, remote_file = pub_fn, local_path = local_path)
+          if dnld_paths[0] eq '' then begin
+            print, 'WARNING: Public L2 ACE file not available: ' + fn_basename
+            print, '  Public data may not yet be released for this date.'
+            print, '  To access teams data, set credentials via tracers_init (url_username and url_password keywords).'
+          endif
+        endelse
+
+        ; if user specifies, then return filenames of where the data has been saved to back to the user
+        sc_filenames = [sc_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
+      end ; level 2
+
+      if (total(level.contains('l3')) ge 1) then begin ; level 3
+        ace_path = '/flight/ACE/' + sc + '/l3/' + yyyy + '/' + mm + '/'
+        fn_i = ace_path + sc + '_l3_ace_' + '*' + dates[i] + '_v' + version + '.cdf'
+
         dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
           url_username = url_username, url_password = url_password)
-      endif else begin
-        pub_path = '/L2/' + strupcase(spacecraft) + '/' + yyyy + '/' + mm + '/' + dd + '/'
-        pub_fn = pub_path + fn_basename
-        dnld_paths = spd_download(remote_path = public_base, remote_file = pub_fn, local_path = local_path)
-        if dnld_paths[0] eq '' then begin
-          print, 'WARNING: Public L2 ACE file not available: ' + fn_basename
-          print, '  Public data may not yet be released for this date.'
-          print, '  To access teams data, set credentials via tracers_init (url_username and url_password keywords).'
-        endif
-      endelse
 
-      ; if user specifies, then return filenames of where the data has been saved to back to the user
-      data_filenames = [data_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
-    end ; level 2
+        ; if user specifies, then return filenames of where the data has been saved to back to the user
+        sc_filenames = [sc_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
+      end ; level 3
+    endfor ; dates
 
-    if (total(level.contains('l3')) ge 1) then begin ; level 3
-      ace_path = '/flight/ACE/' + strlowcase(spacecraft) + '/l3/' + yyyy + '/' + mm + '/'
-      fn_i = ace_path + strlowcase(spacecraft) + '_l3_ace_' + '*' + dates[i] + '_v' + version + '.cdf'
+    data_filenames = [data_filenames, sc_filenames]
 
-      dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_i, local_path = local_path, $
-        url_username = url_username, url_password = url_password)
-
-      ; if user specifies, then return filenames of where the data has been saved to back to the user
-      data_filenames = [data_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
-    end ; level 3
-  endfor ; dates
-
-  if tplot and (total(level.contains('l2')) ge 1) then begin
-    dirname = file_dirname(data_filenames, /mark_directory)
-    dirname = dirname[0].remove(-8)
-    dtmp = strmid(dates, 2)
-    tra_ace_load_l2_data, trange = trange, path = dirname, sv = strlowcase(spacecraft[0]), /tplot, /chare
-  end ; tplot
+    if tplot and (total(level.contains('l2')) ge 1) then begin
+      dirname = file_dirname(sc_filenames, /mark_directory)
+      dirname = dirname[0].remove(-8)
+      dtmp = strmid(dates, 2)
+      tra_ace_load_l2_data, trange = trange, path = dirname, sv = sc, /tplot, /chare
+    end ; tplot
+  endfor ; spacecraft loop
 end

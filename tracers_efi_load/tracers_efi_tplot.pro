@@ -222,13 +222,14 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
       ; EHF options and derived variables.
       ; ---------------------------------------------
       if doehf and (total(spacecraft.contains('ts2')) ge 1) then begin
-        ; get_data, 'ts2_l2_hf_spec', data = d, limits = l, dlimits = dl
-
-        ; options, 'ts2_l2_hf_spec', 'spec', 1
-        ; options, 'ts2_l2_hf_spec', 'ylog', 0
-        ; options, 'ts2_l2_hf_spec', 'yrange', [1., 1.0e7]
-        ; options, 'ts2_l2_hf_spec', 'zlog', 1
-        ; options, 'ts2_l2_hf_spec', 'zrange', [1.0e-10, 1.0e-4]
+        get_data, 'ts2_l2_hf_spec', data = d, limits = l, dlimits = dl
+        if isa(d, 'struct') then begin
+          options, 'ts2_l2_hf_spec', 'spec', 1
+          options, 'ts2_l2_hf_spec', 'ylog', 0
+          options, 'ts2_l2_hf_spec', 'yrange', [1., 1.0e7]
+          options, 'ts2_l2_hf_spec', 'zlog', 1
+          options, 'ts2_l2_hf_spec', 'zrange', [1.0e-10, 1.0e-4]
+        endif
 
         get_data, 'ts2_l2_hf_spec', data = d, limits = l, dlimits = dl
         if isa(d, 'struct') then begin
@@ -265,13 +266,14 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
       endif ; ts2 EHF
 
       if doehf and (total(spacecraft.contains('ts1')) ge 1) then begin
-        ; get_data, 'ts1_l2_hf_spec', data = d, limits = l, dlimits = dl
-
-        ; options, 'ts1_l2_hf_spec', 'spec', 1
-        ; options, 'ts1_l2_hf_spec', 'ylog', 0
-        ; options, 'ts1_l2_hf_spec', 'yrange', [1., 1.0e7]
-        ; options, 'ts1_l2_hf_spec', 'zlog', 1
-        ; options, 'ts1_l2_hf_spec', 'zrange', [1.0e-10, 1.0e-4]
+        get_data, 'ts1_l2_hf_spec', data = d, limits = l, dlimits = dl
+        if isa(d, 'struct') then begin
+          options, 'ts1_l2_hf_spec', 'spec', 1
+          options, 'ts1_l2_hf_spec', 'ylog', 0
+          options, 'ts1_l2_hf_spec', 'yrange', [1., 1.0e7]
+          options, 'ts1_l2_hf_spec', 'zlog', 1
+          options, 'ts1_l2_hf_spec', 'zrange', [1.0e-10, 1.0e-4]
+        endif
 
         get_data, 'ts1_l2_hf_spec', data = d, limits = l, dlimits = dl
         if isa(d, 'struct') then begin

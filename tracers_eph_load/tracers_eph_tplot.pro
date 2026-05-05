@@ -30,12 +30,10 @@ pro tracers_eph_tplot, filenames
     tmp = file_basename(filenames)
     suf = '_eph_' + strmid(tmp, 4, 3) ; suffix for variables def or pre (definitive or predictive)
 
-    tvars = []
-
-    for ifil = 0, nfilesexists - 1 do begin
-      cdf2tplot, files = filenames[ifil], varformat = '*', suffix = suf[ifil]
-      tvars = [tvars, tnames()]
-    end ; for files
+    def_files = filenames[where(suf eq '_eph_def', ndef, /null)]
+    pre_files = filenames[where(suf eq '_eph_pre', npre, /null)]
+    if ndef gt 0 then cdf2tplot, files = def_files, varformat = '*', suffix = '_eph_def'
+    if npre gt 0 then cdf2tplot, files = pre_files, varformat = '*', suffix = '_eph_pre'
   endif ; over filenames found check
 end
 

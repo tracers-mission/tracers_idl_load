@@ -36,15 +36,15 @@ pro tracers_efi_load_rroglans, filenames, timerange
     timespan, timerange
 
     ; set the tplot variable attributes
-    if total(tnames('ts?_l2_igrf_fvc') ne '') ge 1 then options, 'ts?_l2_igrf_fvc', labflag = 1, labels = ['BX!DIGRF!N', 'BY!DIGRF!N', 'BZ!DIGRF!N'], colors = ['r', 'g', 'b']
-    if total(tnames('ts?_l2_vxb_fvc') ne '') ge 1 then options, 'ts?_l2_vxb_fvc', labflag = 1, labels = ['EX!DVXB!N', 'EY!DVXB!N', 'EZ!DVXB!N'], colors = ['r', 'g', 'b']
-    if total(tnames('ts?_l2_esub_fvc') ne '') ge 1 then options, 'ts?_l2_esub_fvc', labflag = 1, labels = ['EX!DESUB!N', 'EY!DESUB!N', 'EZ!DESUB!N'], colors = ['r', 'g', 'b']
-    if total(tnames('ts?_l2_exb_fvc') ne '') ge 1 then options, 'ts?_l2_exb_fvc', labflag = 1, labels = ['VX!DEXB!N', 'VY!DEXB!N', 'VZ!DEXB!N'], colors = ['r', 'g', 'b']
-    if total(tnames('ts?_l2_edc_fvc') ne '') ge 1 then options, 'ts?_l2_edc_fvc', labflag = 1, labels = ['EX!DEDC!N', 'EY!DEDC!N', 'EZ!DEDC!N'], colors = ['r', 'g', 'b']
-    if total(tnames('ts?_l2_vxb_TSCS') ne '') ge 1 then options, 'ts?_l2_vxb_TSCS', labflag = 1, labels = ['EX!DVXB!N', 'EY!DVXB!N', 'EZ!DVXB!N'], colors = ['r', 'g', 'b']
-    if total(tnames('ts?_l2_esub_TSCS') ne '') ge 1 then options, 'ts?_l2_esub_TSCS', labflag = 1, labels = ['EX!DESUB!N', 'EY!DESUB!N', 'EZ!DESUB!N'], colors = ['r', 'g', 'b']
-    if total(tnames('ts?_l2_exb_TSCS') ne '') ge 1 then options, 'ts?_l2_exb_TSCS', labflag = 1, labels = ['VX!DEXB!N', 'VY!DEXB!N', 'VZ!DEXB!N'], colors = ['r', 'g', 'b']
-    if total(tnames('ts?_l2_igrf_TSCS') ne '') ge 1 then options, 'ts?_l2_igrf_TSCS', labflag = 1, labels = ['BX!DIGRF!N', 'BY!DIGRF!N', 'BZ!DIGRF!N'], colors = ['r', 'g', 'b']
-    if total(tnames('ts?_l2_edc_TSCS') ne '') ge 1 then options, 'ts?_l2_edc_TSCS', labflag = 1, labels = ['EX!DEDC!N', 'EY!DEDC!N', 'EZ!DEDC!N'], colors = ['r', 'g', 'b']
+    if total(tnames('ts?_l2_igrf_fvc') ne '') ge 1 then options, 'ts?_l2_igrf_fvc', labflag = 1, labels = ['BX!DIGRF!N', 'BY!DIGRF!N', 'BZ!DIGRF!N'], colors = ['r', 'g', 'b'], constant = 0
+    if total(tnames('ts?_l2_vxb_fvc') ne '') ge 1 then options, 'ts?_l2_vxb_fvc', labflag = 1, labels = ['EX!DVXB!N', 'EY!DVXB!N', 'EZ!DVXB!N'], colors = ['r', 'g', 'b'], constant = 0
+    if total(tnames('ts?_l2_esub_fvc') ne '') ge 1 then options, 'ts?_l2_esub_fvc', labflag = 1, labels = ['EX!DESUB!N', 'EY!DESUB!N', 'EZ!DESUB!N'], colors = ['r', 'g', 'b'], constant = 0
+    if total(tnames('ts?_l2_exb_fvc') ne '') ge 1 then options, 'ts?_l2_exb_fvc', labflag = 1, labels = ['VX!DEXB!N', 'VY!DEXB!N', 'VZ!DEXB!N'], colors = ['r', 'g', 'b'], constant = 0
+    if total(tnames('ts?_l2_edc_fvc') ne '') ge 1 then options, 'ts?_l2_edc_fvc', labflag = 1, labels = ['EX!DEDC!N', 'EY!DEDC!N', 'EZ!DEDC!N'], colors = ['r', 'g', 'b'], constant = 0
+    if total(tnames('ts?_l2_vxb_TSCS') ne '') ge 1 then options, 'ts?_l2_vxb_TSCS', labflag = 1, labels = ['EX!DVXB!N', 'EY!DVXB!N', 'EZ!DVXB!N'], colors = ['r', 'g', 'b'], constant = 0
+    if total(tnames('ts?_l2_esub_TSCS') ne '') ge 1 then options, 'ts?_l2_esub_TSCS', labflag = 1, labels = ['EX!DESUB!N', 'EY!DESUB!N', 'EZ!DESUB!N'], colors = ['r', 'g', 'b'], constant = 0
+    if total(tnames('ts?_l2_exb_TSCS') ne '') ge 1 then options, 'ts?_l2_exb_TSCS', labflag = 1, labels = ['VX!DEXB!N', 'VY!DEXB!N', 'VZ!DEXB!N'], colors = ['r', 'g', 'b'], constant = 0
+    if total(tnames('ts?_l2_igrf_TSCS') ne '') ge 1 then options, 'ts?_l2_igrf_TSCS', labflag = 1, labels = ['BX!DIGRF!N', 'BY!DIGRF!N', 'BZ!DIGRF!N'], colors = ['r', 'g', 'b'], constant = 0
+    if total(tnames('ts?_l2_edc_TSCS') ne '') ge 1 then options, 'ts?_l2_edc_TSCS', labflag = 1, labels = ['EX!DEDC!N', 'EY!DEDC!N', 'EZ!DEDC!N'], colors = ['r', 'g', 'b'], constant = 0
   endif
 end

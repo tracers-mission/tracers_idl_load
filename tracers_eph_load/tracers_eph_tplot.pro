@@ -27,6 +27,23 @@ pro tracers_eph_tplot, filenames
     endif
     filenames = filenames[indx]
 
+    ; keep only the highest version when multiple versions of the same file exist
+    basenames = file_basename(filenames)
+    base_keys = reform((stregex(basenames, '^(.+)_v.+\.cdf$', /extract, /subexpr))[1, *])
+    unique_bases = base_keys[uniq(base_keys, sort(base_keys))]
+    keep_idx = []
+    foreach ubase, unique_bases do begin
+      idx = where(base_keys eq ubase, cnt)
+      if cnt eq 1 then begin
+        keep_idx = [keep_idx, idx[0]]
+      endif else begin
+        ver_strs = reform((stregex(basenames[idx], '_v(.+)\.cdf$', /extract, /subexpr))[1, *])
+        highv = get_highest_version(ver_strs, 3)
+        keep_idx = [keep_idx, (highv ge 0) ? idx[highv] : idx[0]]
+      endelse
+    endforeach
+    filenames = filenames[keep_idx]
+
     tmp = file_basename(filenames)
     suf = '_eph_' + strmid(tmp, 4, 3) ; suffix for variables def or pre (definitive or predictive)
 

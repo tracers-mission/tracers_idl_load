@@ -49,12 +49,12 @@ pro tracers_aci_tplot, filenames, spacecraft = spacecraft, level = level
 
     ; save pre-existing raw CDF variables before cdf2tplot overwrites them
     raw_vnames = [spacecraft + '_l2_aci_tscs_def', $
-                  spacecraft + '_l2_aci_tscs_def_errors', $
-                  spacecraft + '_l2_aci_tscs_def_sorted_counts', $
-                  spacecraft + '_l2_aci_tscs_pitch_angle', $
-                  spacecraft + '_l2_aci_gei2000_look_direction_theta', $
-                  spacecraft + '_l2_aci_gei2000_look_direction_phi', $
-                  spacecraft + '_l2_aci_quat_tscs_to_gei2000']
+      spacecraft + '_l2_aci_tscs_def_errors', $
+      spacecraft + '_l2_aci_tscs_def_sorted_counts', $
+      spacecraft + '_l2_aci_tscs_pitch_angle', $
+      spacecraft + '_l2_aci_gei2000_look_direction_theta', $
+      spacecraft + '_l2_aci_gei2000_look_direction_phi', $
+      spacecraft + '_l2_aci_quat_tscs_to_gei2000']
     nraw = n_elements(raw_vnames)
     raw_old = ptrarr(nraw)
     for iv = 0, nraw - 1 do begin
@@ -124,18 +124,22 @@ pro tracers_aci_tplot, filenames, spacecraft = spacecraft, level = level
       espec_avg = total(dat.y, 3) / nang
       store_data, spacecraft + '_l2_aci_en_eflux_avg', data = {x: dat.x, y: espec_avg, v: energy_steps}, $
         limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Avg Diff. En. Flux', $
-          spec: 1, yrange: [8., 2.e4], ystyle: 1}
+          spec: 1, yrange: [8., 2.e4], ystyle: 1, no_interp: 1}, $
+        dlimit = {data_gap: 60}
 
       ; angle-integrated energy spectrogram: sum over 16 anode angles
       espec_int = total(dat.y, 3)
       store_data, spacecraft + '_l2_aci_en_eflux_int', data = {x: dat.x, y: espec_int, v: energy_steps}, $
         limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Int. Diff. En. Flux', $
-          spec: 1, yrange: [8., 2.e4], ystyle: 1}
+          spec: 1, yrange: [8., 2.e4], ystyle: 1, no_interp: 1}, $
+        dlimit = {data_gap: 60}
 
       ; energy-averaged angle spectrogram: mean over 47 energy channels
       aspec = total(dat.y, 2) / nen
       store_data, spacecraft + '_l2_aci_an_eflux_avg', data = {x: dat.x, y: aspec, v: angle_Steps}, $
-        limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Avg Diff. En. Flux', spec: 1, ystyle: 1}
+        limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Avg Diff. En. Flux', $
+          spec: 1, ystyle: 1, no_interp: 1}, $
+        dlimit = {data_gap: 60}
     endif else dprint, 'WARNING: ' + tmp_vname + ' not found in CDF — skipping diff. energy flux variables.'
 
     ; COUNTS!
@@ -171,18 +175,22 @@ pro tracers_aci_tplot, filenames, spacecraft = spacecraft, level = level
       especc_avg = total(dat.y, 3) / nang
       store_data, spacecraft + '_l2_aci_en_counts_avg', data = {x: dat.x, y: especc_avg, v: energy_steps}, $
         limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Avg Counts', $
-          spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
+          spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2], no_interp: 1}, $
+        dlimit = {data_gap: 60}
 
       ; angle-integrated counts energy spectrogram: sum over 16 anode angles
       especc_int = total(dat.y, 3)
       store_data, spacecraft + '_l2_aci_en_counts_int', data = {x: dat.x, y: especc_int, v: energy_steps}, $
         limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Int. Counts', $
-          spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
+          spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2], no_interp: 1}, $
+        dlimit = {data_gap: 60}
 
       ; energy-averaged angle spectrogram: mean over 47 energy channels
       aspecc = total(dat.y, 2) / nen
       store_data, spacecraft + '_l2_aci_an_counts_avg', data = {x: dat.x, y: aspecc, v: angle_Steps}, $
-        limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Avg Counts', spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2]}
+        limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Avg Counts', $
+          spec: 1, ystyle: 1, zrange: [1.e-2, 1.e2], no_interp: 1}, $
+        dlimit = {data_gap: 60}
     endif else dprint, 'WARNING: ' + tmp_vname + ' not found in CDF — skipping counts variables.'
 
     ; PITCH ANGLE

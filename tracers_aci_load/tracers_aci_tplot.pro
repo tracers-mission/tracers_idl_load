@@ -14,6 +14,12 @@
 ;     '[spacecraft]_l1b_aci_*' are snapshotted before cdf2tplot runs, and
 ;     new data is appended/time-sorted onto them afterward.
 ;
+;     If '[spacecraft]_l1b_aci_flux' exists (data.y[ntimes,16,47], dim2 =
+;     anode angle (v2), dim3 = energy (v1)), two derived spectrograms are
+;     created: an angle spectrogram (flux integrated over energy bins) and
+;     an energy spectrogram (flux integrated over anode angles/look
+;     direction).
+;
 ; :Arguments:
 ;   filenames: bidirectional, required, any
 ;     Placeholder docs for argument, keyword, or property
@@ -272,6 +278,30 @@ pro tracers_aci_tplot, filenames, spacecraft = spacecraft, level = level
         store_data, old_vnames[iv], data = new_struct
       endfor
       ptr_free, old_dat
+
+      ; FLUX
+      ; ------------------------------------
+      tmp_vname = spacecraft + '_l1b_aci_flux'
+      get_data, tmp_vname, data = dat, limit = lim, dlimit = dlim
+      if isa(dat, 'struct') then begin
+        ; dat.y is [ntimes, nang, nen]: dim2 = anode angle (v2, 16), dim3 = energy (v1, 47)
+        energy_steps = dat.v1
+        angle_steps = dat.v2
+
+        ; angle spectrogram: flux integrated over energy bins
+        aflux_int = total(dat.y, 3)
+        store_data, spacecraft + '_l1b_aci_an_flux_int', data = {x: dat.x, y: aflux_int, v: angle_steps}, $
+          limit = {ylog: 0, zlog: 1, ytitle: strupcase(spacecraft) + '!CAnode Angle', ztitle: 'Int. Flux', $
+            spec: 1, ystyle: 1, no_interp: 1}, $
+          dlimit = {data_gap: 60}
+
+        ; energy spectrogram: flux integrated over anode angles (look direction)
+        eflux_int = total(dat.y, 2)
+        store_data, spacecraft + '_l1b_aci_en_flux_int', data = {x: dat.x, y: eflux_int, v: energy_steps}, $
+          limit = {ylog: 1, zlog: 1, ytitle: strupcase(spacecraft) + '!CEnergy [eV]', ztitle: 'Int. Flux', $
+            spec: 1, ystyle: 1, no_interp: 1}, $
+          dlimit = {data_gap: 60}
+      endif else dprint, 'WARNING: ' + tmp_vname + ' not found in CDF — skipping flux variables.'
     end ; over level 1b
   endif ; over filenames found check
 end

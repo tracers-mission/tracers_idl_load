@@ -19,7 +19,7 @@
 ;   spacecraft: in, optional, str | Array<String>
 ;     ['ts1','ts2','both']
 ;     spacecraft to load (defaults to 'ts2'); 'both' or ['ts1','ts2'] loads both spacecraft
-;   trange: in, optional, str or double arr
+;   trange: in, optional, str | or | Double | arr
 ;     load data for all files within a given range (one day granularity,
 ;     supercedes file list, if not set then 'timerange' will be called)
 ;   url_password: in, optional, str
@@ -114,6 +114,8 @@ pro tracers_aci_load, remote_path = remote_path, local_path = local_path, $
 
         sc_filenames = [sc_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
 
+        dnld_paths = dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]
+
         if tplot then tracers_aci_tplot, dnld_paths, spacecraft = sc
       end ; level 2
 
@@ -130,6 +132,9 @@ pro tracers_aci_load, remote_path = remote_path, local_path = local_path, $
           url_username = url_username, url_password = url_password)
 
         sc_filenames = [sc_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
+        dnld_paths = dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]
+
+        if tplot then tracers_aci_tplot, dnld_paths, spacecraft = sc, level = 'l1b'
       end ; level 1b
 
       if (total(level.contains('l1a')) ge 1) then begin ; level 1a

@@ -33,6 +33,12 @@ if rois.ts2.tstart[0] ne '' then begin
   for i = 0, n - 1 do print, rois.ts2.tstart[i] + '  -->  ' + rois.ts2.tend[i]
 endif else print, 'No TS2 ROIs found in the requested time range.'
 
+; print the orbit numbers of the ROIs:
+if rois.ts2.tstart[0] ne '' then begin
+  n = n_elements(rois.ts2.tstart)
+  for i = 0, n - 1 do print, 'ROI Orbit Number: ' + rois.ts2.orbit_num[i]
+endif else print, 'No TS2 ROIs found in the requested time range.'
+
 ; -----------------------------------
 ; Tandem ROIs between 2026-01-01 and 2026-01-02
 ; -----------------------------------

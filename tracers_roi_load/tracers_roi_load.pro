@@ -19,6 +19,8 @@
 ;   Expects CSV columns: Start_Epoch, End_Epoch, Orbit_Num, ROI_Num, Event_Tag
 ;   Epoch format in file: '2025-11-08T06:15:27' (ISO 8601, T separator)
 ;   Lines beginning with '#' are skipped (file header comments)
+;   Returns {tstart, tend, orbit_num, roi_num} - orbit_num and roi_num are
+;   long integer arrays parallel to tstart/tend.
 ;
 ;-
 function tracers_roi_parse, filename, trange
@@ -61,10 +63,12 @@ function tracers_roi_parse, filename, trange
 
   tstart_list = list()
   tend_list = list()
+  orbit_list = list()
+  roi_list = list()
 
   for i = 0, nrows - 1 do begin
     cols = strsplit(all_data[i + 1], ',', /extract)
-    if n_elements(cols) lt 2 then continue
+    if n_elements(cols) lt 4 then continue
 
     ; Convert ISO 8601 'YYYY-MM-DDTHH:MM:SS' to SPEDAS format 'YYYY-MM-DD/HH:MM:SS'
     t0_str = strjoin(strsplit(strtrim(cols[0], 2), 'T', /extract), '/')
@@ -76,11 +80,14 @@ function tracers_roi_parse, filename, trange
     if tstart_d lt trange[1] and tend_d gt trange[0] then begin
       tstart_list.add, time_string(tstart_d)
       tend_list.add, time_string(tend_d)
+      orbit_list.add, long(strtrim(cols[2], 2))
+      roi_list.add, long(strtrim(cols[3], 2))
     endif
   endfor
 
   if tstart_list.count() eq 0 then return, []
-  return, {tstart: tstart_list.toArray(), tend: tend_list.toArray()}
+  return, {tstart: tstart_list.toArray(), tend: tend_list.toArray(), $
+    orbit_num: long(orbit_list.toArray()), roi_num: long(roi_list.toArray())}
 end
 
 ;+
@@ -93,15 +100,23 @@ end
 ;
 ; :Returns: Structure
 ;   Structure with one sub-struct per spacecraft. Each sub-struct contains
-;   parallel string arrays of start and end times. Access via:
-;     roi_out.ts1.tstart    - string array of TS1 ROI start times
-;     roi_out.ts1.tend      - string array of TS1 ROI end times
-;     roi_out.ts2.tstart    - string array of TS2 ROI start times
-;     roi_out.ts2.tend      - string array of TS2 ROI end times
-;     roi_out.tandem.tstart - string array of tandem ROI start times
-;     roi_out.tandem.tend   - string array of tandem ROI end times
+;   parallel arrays of start/end times, orbit numbers, and ROI numbers.
+;   Access via:
+;     roi_out.ts1.tstart     - string array of TS1 ROI start times
+;     roi_out.ts1.tend       - string array of TS1 ROI end times
+;     roi_out.ts1.orbit_num  - long array of TS1 orbit numbers
+;     roi_out.ts1.roi_num    - long array of TS1 ROI numbers
+;     roi_out.ts2.tstart     - string array of TS2 ROI start times
+;     roi_out.ts2.tend       - string array of TS2 ROI end times
+;     roi_out.ts2.orbit_num  - long array of TS2 orbit numbers
+;     roi_out.ts2.roi_num    - long array of TS2 ROI numbers
+;     roi_out.tandem.tstart  - string array of tandem ROI start times
+;     roi_out.tandem.tend    - string array of tandem ROI end times
+;     roi_out.tandem.orbit_num - long array of tandem orbit numbers
+;     roi_out.tandem.roi_num  - long array of tandem ROI numbers
 ;   Times are stored as time_string() format (e.g. '2025-11-08/06:15:27').
-;   Spacecraft not requested are set to {tstart: [''], tend: ['']} placeholders.
+;   Spacecraft not requested are set to
+;   {tstart: [''], tend: [''], orbit_num: [0l], roi_num: [0l]} placeholders.
 ;   Use n_elements(roi_out.ts1.tstart) and check roi_out.ts1.tstart[0] ne ''
 ;   to determine whether any ROIs were found for a given spacecraft.
 ;   Returns !null on download-only or invalid-spacecraft calls.
@@ -224,7 +239,7 @@ function tracers_roi_load, spacecraft = spacecraft, trange = trange, $
 
   ; Parse requested files - each returns {tstart: str_arr, tend: str_arr} or [] if no matches
   ; Fields not requested stay as empty placeholders
-  empty = {tstart: [''], tend: ['']}
+  empty = {tstart: [''], tend: [''], orbit_num: [0l], roi_num: [0l]}
   ts1_result = empty
   ts2_result = empty
   tandem_result = empty

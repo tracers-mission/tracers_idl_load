@@ -182,7 +182,7 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
 
         if has_credentials then begin
           ; teams portal: uppercase instrument in folder path, lowercase in filename
-          teams_path = '/flight/' + instrument + '/' + level + '/' + sc + '/' + yyyy + '/' + mm + '/' + dd + '/'
+          teams_path = '/flight/' + instrument + '/publish/' + level + ' / ' + sc + ' / ' + yyyy + ' / ' + mm + ' / ' + dd + ' / ''
           fn_arr = teams_path + fn_basenames
           dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_arr, local_path = local_path, $
             url_username = url_username, url_password = url_password)

@@ -10,11 +10,19 @@
 ;     snapshotted before cdf2tplot runs, and new data is appended/time-sorted
 ;     onto them afterward.
 ;
+;     CDF variable names are inconsistent (e.g. 'ts2_location', 'flags',
+;     'msc_gain', 'ts2_l2_bac_tscs') and some are generic enough to collide
+;     across spacecraft. After cdf2tplot, each newly created variable is
+;     renamed to '[spacecraft]_l2_msc_...' by stripping any 'ts1_'/'ts2_'/
+;     'l2_'/'msc_' prefixes and re-prepending the standardized prefix.
+;
 ; :Arguments:
 ;   filenames: bidirectional, required, str
 ;     path and filenames to get to cdf files to convert to tplot
 ;
 ; :Keywords:
+;   level: bidirectional, optional, any
+;     Placeholder docs for argument, keyword, or property
 ;   spacecraft: bidirectional, optional, str
 ;     spacecraft ('ts1' or 'ts2'), defaults to 'ts2'
 ;
@@ -22,11 +30,12 @@
 ;   - get_highest_version.pro from ACE load routines
 ;
 ;-
-pro tracers_msc_tplot, filenames, spacecraft = spacecraft
+pro tracers_msc_tplot, filenames, spacecraft = spacecraft, level = level
   compile_opt idl2
 
   if undefined(spacecraft) then spacecraft = 'ts2' ; default to ts2
   if n_elements(spacecraft) eq 1 and (isa(spacecraft, /array, /string)) then spacecraft = spacecraft[0]
+  if undefined(level) then level = 'l2'
 
   if (size(filenames, /type) eq 7) then begin
     ; only proceed if filenames are found
@@ -54,7 +63,30 @@ pro tracers_msc_tplot, filenames, spacecraft = spacecraft
       if isa(tmp_old, 'struct') then old_dat[iv] = ptr_new(tmp_old)
     endfor
 
-    cdf2tplot, files = mscfile, varformat = '*'
+    cdf2tplot, files = mscfile, varformat = '*', tplotnames = new_vnames
+
+    ; standardize newly created variable names to '[spacecraft]_l2_msc_...'
+    ; CDF variable names vary (e.g. 'ts2_location', 'flags', 'msc_gain',
+    ; 'ts2_l2_bac_tscs') and generic names collide across spacecraft, so
+    ; strip any spacecraft/level/instrument prefixes and re-prepend the
+    ; standardized prefix.
+    strip_prefixes = ['ts1_', 'ts2_', 'l2_', 'msc_']
+    for iv = 0, n_elements(new_vnames) - 1 do begin
+      vn = new_vnames[iv]
+      stem = vn
+      repeat begin
+        changed = 0
+        for ip = 0, n_elements(strip_prefixes) - 1 do begin
+          plen = strlen(strip_prefixes[ip])
+          if strmid(stem, 0, plen) eq strip_prefixes[ip] then begin
+            stem = strmid(stem, plen)
+            changed = 1
+          endif
+        endfor
+      endrep until ~changed
+      new_name = prefix + '_' + stem
+      if new_name ne vn then tplot_rename, vn, new_name
+    endfor
 
     ; append new data onto any pre-existing variables and time-sort
     for iv = 0, nold - 1 do begin

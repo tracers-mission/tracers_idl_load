@@ -21,8 +21,8 @@
 ;     path and filenames to get to cdf files to convert to tplot
 ;
 ; :Keywords:
-;   level: bidirectional, optional, any
-;     Placeholder docs for argument, keyword, or property
+;   level: bidirectional, optional, str
+;     data level, default to level 2 'l2'
 ;   spacecraft: bidirectional, optional, str
 ;     spacecraft ('ts1' or 'ts2'), defaults to 'ts2'
 ;
@@ -70,7 +70,7 @@ pro tracers_msc_tplot, filenames, spacecraft = spacecraft, level = level
     ; 'ts2_l2_bac_tscs') and generic names collide across spacecraft, so
     ; strip any spacecraft/level/instrument prefixes and re-prepend the
     ; standardized prefix.
-    strip_prefixes = ['ts1_', 'ts2_', 'l2_', 'msc_']
+    strip_prefixes = ['ts1_', 'ts2_', 'l2_', 'msc_', 'l1b_', 'l1a_']
     for iv = 0, n_elements(new_vnames) - 1 do begin
       vn = new_vnames[iv]
       stem = vn
@@ -110,5 +110,76 @@ pro tracers_msc_tplot, filenames, spacecraft = spacecraft, level = level
       store_data, old_vnames[iv], data = new_struct
     endfor
     ptr_free, old_dat
-  endif ; over filenames found check
+
+    ; ; now start working on the tplot variables that are needed
+    ; if level eq 'l2' then begin
+    ; ; TS1
+    ; if (total(spacecraft.contains('ts1')) ge 1) then begin
+    ; if (total(tnames('ts1_l2_msc_bac_tscs') ne '') ge 1) then begin
+    ; nm = 'ts1_l2_msc_bac_tscs'
+    ; get_data, nm, data = data, limit = limit, dlimit = dlimit
+    ; times = []
+    ; xx = []
+    ; yy = []
+    ; zz = []
+    ; for j = 0, n_elements(data.x) - 1 do begin
+    ; times = [times, data.x[j] + data.v]
+    ; xx = [xx, reform(data.y[j, *, 0])]
+    ; yy = [yy, reform(data.y[j, *, 1])]
+    ; zz = [zz, reform(data.y[j, *, 2])]
+    ; endfor
+
+    ; ; xx = reform(data.y[*, *, 0], n_elements(times))
+    ; ; yy = reform(data.y[*, *, 1], n_elements(times))
+    ; ; zz = reform(data.y[*, *, 2], n_elements(times))
+    ; store_Data, nm + '_x', data = {x: times, y: xx}, dlimit = dlimit
+    ; store_Data, nm + '_y', data = {x: times, y: yy}, dlimit = dlimit
+    ; store_Data, nm + '_z', data = {x: times, y: zz}, dlimit = dlimit
+    ; end ; tscs
+    ; if (total(tnames('ts1_l2_msc_bac_fac') ne '') ge 1) then begin
+    ; nm = 'ts1_l2_msc_bac_fac'
+    ; get_data, nm, data = data, limit = limit, dlimit = dlimit
+    ; times = []
+    ; for j = 0, n_elements(data.x) - 1 do times = [times, data.x[j] + data.v]
+
+    ; xx = reform(data.y[*, *, 0], n_elements(times))
+    ; yy = reform(data.y[*, *, 1], n_elements(times))
+    ; zz = reform(data.y[*, *, 2], n_elements(times))
+    ; store_Data, nm + '_x', data = {x: times, y: xx, v: data.v}, limit = {spec: 1}, dlimit = dlimit
+    ; store_Data, nm + '_y', data = {x: times, y: yy, v: data.v}, limit = {spec: 1}, dlimit = dlimit
+    ; store_Data, nm + '_z', data = {x: times, y: zz, v: data.v}, limit = {spec: 1}, dlimit = dlimit
+    ; end ; fac
+    ; end ; ts1
+
+    ; ; TS2
+    ; if (total(spacecraft.contains('ts2')) ge 1) then begin
+    ; if (total(tnames('ts2_l2_msc_bac_tscs') ne '') ge 1) then begin
+    ; nm = 'ts2_l2_msc_bac_tscs'
+    ; get_data, nm, data = data, limit = limit, dlimit = dlimit
+    ; times = []
+    ; for j = 0, n_elements(data.x) - 1 do times = [times, data.x[j] + data.v]
+
+    ; xx = reform(data.y[*, *, 0], n_elements(times))
+    ; yy = reform(data.y[*, *, 1], n_elements(times))
+    ; zz = reform(data.y[*, *, 2], n_elements(times))
+    ; store_Data, nm + '_x', data = {x: times, y: xx, v: data.v}, limit = {spec: 1}, dlimit = dlimit
+    ; store_Data, nm + '_y', data = {x: times, y: yy, v: data.v}, limit = {spec: 1}, dlimit = dlimit
+    ; store_Data, nm + '_z', data = {x: times, y: zz, v: data.v}, limit = {spec: 1}, dlimit = dlimit
+    ; end ; tscs
+    ; if (total(tnames('ts2_l2_msc_bac_fac') ne '') ge 1) then begin
+    ; nm = 'ts2_l2_msc_bac_fac'
+    ; get_data, nm, data = data, limit = limit, dlimit = dlimit
+    ; times = []
+    ; for j = 0, n_elements(data.x) - 1 do times = [times, data.x[j] + data.v]
+
+    ; xx = reform(data.y[*, *, 0], n_elements(times))
+    ; yy = reform(data.y[*, *, 1], n_elements(times))
+    ; zz = reform(data.y[*, *, 2], n_elements(times))
+    ; store_Data, nm + '_x', data = {x: times, y: xx, v: data.v}, limit = {spec: 1}, dlimit = dlimit
+    ; store_Data, nm + '_y', data = {x: times, y: yy, v: data.v}, limit = {spec: 1}, dlimit = dlimit
+    ; store_Data, nm + '_z', data = {x: times, y: zz, v: data.v}, limit = {spec: 1}, dlimit = dlimit
+    ; end ; fac
+    ; end ; ts2
+  end ; level 2
+  ; over filenames found check
 end

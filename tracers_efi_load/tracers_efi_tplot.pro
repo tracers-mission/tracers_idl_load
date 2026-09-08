@@ -170,7 +170,9 @@ pro tracers_efi_tplot, filenames, spacecraft = spacecraft, level = level
           get_data, 'ts1_l2_eac', data = d, limits = l, dlimits = dl
           if isa(d, 'struct') then options, 'ts1_l2_eac', colors = ['r', 'g'], labflag = 1, labels = ['X', 'Y']
           get_data, 'ts1_l2_eac_x_spec', data = dx, limits = lx, dlimits = dlx
+          if isa(dx, 'struct') then options, 'ts1_l2_eac_x_spec', spec = 1, zlog = 1, zrange = [1.0e-12, 1.0e-9]
           get_Data, 'ts1_l2_eac_y_spec', data = dy, limits = ly, dlimits = dly
+          if isa(dy, 'struct') then options, 'ts1_l2_eac_y_spec', spec = 1, zlog = 1, zrange = [1.0e-12, 1.0e-9]
         end
 
         if total(spacecraft.contains('ts2')) ge 1 then begin

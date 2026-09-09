@@ -200,7 +200,8 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
           endfor
         endelse
 
-        sc_filenames = [sc_filenames, dnld_paths]
+        ; if user specifies, then return filenames of where the data has been saved to back to the user
+        sc_filenames = [sc_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
       end ; loading level 2 data
 
       ; ----------------------------
@@ -239,7 +240,8 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
         dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_arr, local_path = local_path, $
           url_username = url_username, url_password = url_password)
 
-        sc_filenames = [sc_filenames, dnld_paths]
+        ; if user specifies, then return filenames of where the data has been saved to back to the user
+        sc_filenames = [sc_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
       end ; loading level 1b data
 
       ; ---------------------------
@@ -274,7 +276,8 @@ pro tracers_efi_load, files, remote_path = remote_path, local_path = local_path,
         dnld_paths = spd_download(remote_path = remote_path, remote_file = fn_arr, local_path = local_path, $
           url_username = url_username, url_password = url_password)
 
-        sc_filenames = [sc_filenames, dnld_paths]
+        ; if user specifies, then return filenames of where the data has been saved to back to the user
+        sc_filenames = [sc_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
       end ; fetch level 1a data
     endfor ; over dates/files
 

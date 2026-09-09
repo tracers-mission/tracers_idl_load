@@ -13,7 +13,7 @@
 ;     TRACERS website
 ;   revision: bidirectional, optional, str
 ;     revision version of data to download, default to latest
-;   trange: bidirectional, optional, double or str
+;   trange: bidirectional, optional, Double | or | str
 ;     array containing dates/times to search for data on website (e.g. from timespan)
 ;   url_password: bidirectional, optional, str
 ;     password for TRACERS website
@@ -85,7 +85,7 @@ pro tracers_sw_load, remote_path = remote_path, local_path = local_path, $
       url_username = url_username, url_password = url_password)
 
     ; if user specifies, then return filenames of where the data has been saved to back to the user
-    data_filenames = [data_filenames, dnld_paths]
+    data_filenames = [data_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
   endfor ; dates
 
   if tplot then begin

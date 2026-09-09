@@ -115,8 +115,7 @@ pro tracers_msc_load, remote_path = remote_path, local_path = local_path, $
         endif
       endelse
 
-      dnld_paths = dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]
-      sc_filenames = [sc_filenames, dnld_paths]
+      sc_filenames = [sc_filenames, , dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
 
       if tplot then tracers_msc_tplot, dnld_paths, spacecraft = sc, level = level
     endfor ; loop over dates

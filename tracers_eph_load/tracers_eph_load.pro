@@ -120,7 +120,7 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
         url_username = url_username, url_password = url_password)
 
       ; if user specifies, then return filenames of where the data has been saved to back to the user
-      data_filenames = [data_filenames, dnld_paths]
+      data_filenames = [data_filenames, , dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
     end ; definitive solutions
 
     if total(datatype.contains('predict')) ge 1 then begin ; predictive solutions
@@ -131,7 +131,7 @@ pro tracers_eph_load, remote_path = remote_path, local_path = local_path, $
         url_username = url_username, url_password = url_password)
 
       ; if user specifies, then return filenames of where the data has been saved to back to the user
-      data_filenames = [data_filenames, dnld_paths]
+      data_filenames = [data_filenames, dnld_paths[uniq(dnld_paths[sort(dnld_paths)])]]
     end ; predictive solutions
   endfor ; dates
 

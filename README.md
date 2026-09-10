@@ -10,13 +10,24 @@ conventions for data download and loading. These routines are regularly updated,
 - SPEDAS-compatible naming
 
 ## Requirements
-- IDL 
+- IDL (see [my personal coding environment setup workflow Github](https://github.com/spaceskyentist/coding_setup_srshaver) if you need help installing IDL)
 - SPEDAS routines (e.g. `tplot`) from [SPEDAS wiki here](https://spedas.org/wiki/index.php?title=Downloads_and_Installation)
 - (optional) IDL-colorbars routines (e.g. `loadcv`) from planetarymike [github repo here](https://github.com/planetarymike/IDL-Colorbars)
 
 ## Notes
 - You will need to update the tracers_init.pro before running any of this code!!
 - Can only load in one spacecraft at a time (TS1 or TS2)
+
+## How to Download
+
+Currently, I do not have this open for forking or collaborative development. If you would like access to make changes through GitHub, then please reach out to Sky directly <skylar.shaver@mail.wvu.edu>.
+Therefore, you will need to download the code as a Zip file by doing the following:
+1. Click the green [<>Code \/] button in the top left corner of the home page
+2. Under the SSH tab (which should automatically be selected), click "Download Zip"
+3. Move the Zip File to where you want to store the code on your local device
+4. Un-zip the folder, and voila!
+
+I recommend adding the tracers_idl_load folder to your IDL paths. 
 
 ## Future Capabilities?
 - MAG, MSC, MAGIC

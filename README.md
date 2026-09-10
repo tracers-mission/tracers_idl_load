@@ -23,7 +23,7 @@ conventions for data download and loading. These routines are regularly updated,
 - Email Sky with what you want! <skylar.shaver@mail.wvu.edu>
 
 ## Contributors
-A special thank you to contributors to this code: Dr. John Bonnell, Dr. Marit Oieroset, Dr. Jasper Halekas, Dr. Katy Goodrich, Dr. Sarah Henderson, and others!
+A special thank you to contributors to this code: Dr. John Bonnell, Dr. Marit Oieroset, Dr. Jasper Halekas, Dr. Katy Goodrich, Dr. Sarah Henderson, Dr. David Hartley, Dr. Bob Strangeway, and others!
 
 ## Basic Usage
 ```idl
